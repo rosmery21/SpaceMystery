@@ -1,0 +1,39 @@
+
+[
+  {
+    "id": "indizio_001",
+    "description": "Un registro di navigazione mostra una modifica non autorizzata alla rotta della stazione spaziale.",
+    "locationId": "sala_comandi",
+    "discovered": false
+  },
+  {
+    "id": "indizio_002",
+    "description": "Un messaggio di emergenza è stato cancellato dal sistema di comunicazione poche ore prima dell'incidente.",
+    "locationId": "sala_comandi",
+    "discovered": false
+  },
+  {
+    "id": "indizio_003",
+    "description": "Un campione biologico sconosciuto presenta tracce di una sostanza non registrata nei database scientifici.",
+    "locationId": "laboratorio",
+    "discovered": false
+  },
+  {
+    "id": "indizio_004",
+    "description": "Gli appunti della Dott.ssa Vega indicano che alcuni risultati delle analisi sono stati alterati.",
+    "locationId": "laboratorio",
+    "discovered": false
+  },
+  {
+    "id": "indizio_005",
+    "description": "Il sistema di alimentazione principale mostra segni di manomissione intenzionale.",
+    "locationId": "sala_motori",
+    "discovered": false
+  },
+  {
+    "id": "indizio_006",
+    "description": "Un dispositivo elettronico sconosciuto è nascosto dietro uno dei generatori della stazione.",
+    "locationId": "sala_motori",
+    "discovered": false
+  }
+]

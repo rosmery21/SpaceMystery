@@ -5,28 +5,34 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Astronaut {
+public class Astronaut extends GameCharacter {
 
-    private final String name;
     private int reputation;
     private final List<Clue> notebook;
     private final List<Report> reports;
     private final List<Location> visitedLocations;
 
-    public Astronaut(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Nome non valido");
-        }
+    // Costruttore vuoto per la deserializzazione JSON
+    public Astronaut() {
+        super();
+        this.notebook = new ArrayList<>();
+        this.reports = new ArrayList<>();
+        this.visitedLocations = new ArrayList<>();
+    }
 
-        this.name = name;
+    public Astronaut(String name) {
+        super(name, "Astronauta");
+
         this.reputation = 0;
         this.notebook = new ArrayList<>();
         this.reports = new ArrayList<>();
         this.visitedLocations = new ArrayList<>();
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public void presentati() {
+        System.out.println("Sono " + getName()
+                + ", astronauta a bordo della SpaceMystery.");
     }
 
     public int getReputation() {

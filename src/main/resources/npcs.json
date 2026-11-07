@@ -1,0 +1,36 @@
+
+[
+  {
+    "id": "npc_vega",
+    "name": "Dott.ssa Vega",
+    "role": "Responsabile scientifica",
+    "dialogues": [
+      "Alex, qualcosa non torna nei risultati delle nostre analisi.",
+      "Ho scoperto delle anomalie nei campioni biologici, ma qualcuno ha modificato i dati.",
+      "Controlla il Laboratorio Scientifico. Potresti trovare qualcosa di importante."
+    ],
+    "cluesProvided": []
+  },
+  {
+    "id": "npc_orion",
+    "name": "Comandante Orion",
+    "role": "Comandante della stazione",
+    "dialogues": [
+      "Benvenuto nella Sala Comandi, Alex.",
+      "Abbiamo rilevato un cambiamento inspiegabile nella rotta della stazione.",
+      "Dobbiamo scoprire chi ha avuto accesso al sistema di navigazione."
+    ],
+    "cluesProvided": []
+  },
+  {
+    "id": "npc_nova",
+    "name": "Ingegnere Nova",
+    "role": "Responsabile dei motori",
+    "dialogues": [
+      "I generatori stanno funzionando in modo anomalo.",
+      "Ho trovato tracce di una possibile manomissione al sistema energetico.",
+      "Se vuoi capire cosa è successo, dovresti controllare la Sala Motori."
+    ],
+    "cluesProvided": []
+  }
+]

@@ -3,7 +3,7 @@ package it.unicam.cs.mpgc.rpg126604;
 
 import it.unicam.cs.mpgc.rpg126604.controller.GameController;
 import it.unicam.cs.mpgc.rpg126604.repository.JsonGameRepository;
-import it.unicam.cs.mpgc.rpg126604.view.GameView;
+import it.unicam.cs.mpgc.rpg126604.view.WelcomeView;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -18,8 +18,8 @@ public class Main extends Application {
 
         JsonGameRepository repository = new JsonGameRepository();
         GameController controller = new GameController(repository);
-        GameView view = new GameView(controller, stage);
 
+        WelcomeView view = new WelcomeView(controller, stage);
         view.show();
     }
 

@@ -128,6 +128,11 @@ public class GameView {
     }
 
     private void writeReport() {
+        if (controller.getAstronaut().getNotebook().isEmpty()) {
+            showAlert("Devi raccogliere almeno un indizio prima di creare un rapporto.");
+            return;
+        }
+
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Nuovo rapporto");
         dialog.setHeaderText("Crea un rapporto investigativo");
@@ -144,8 +149,8 @@ public class GameView {
                 controller.publishReport(report);
                 updateView();
 
-                showAlert("Rapporto completato! Punteggio: " +
-                        controller.getAstronaut().getReputation());
+                showAlert("Rapporto completato! Punteggio: "
+                        + controller.getAstronaut().getReputation());
             }
         });
     }
@@ -156,8 +161,8 @@ public class GameView {
         locationLabel.setText("Posizione: " + current.getName());
         descriptionArea.setText(current.getDescription());
 
-        reputationLabel.setText("Punteggio: " +
-                controller.getAstronaut().getReputation());
+        reputationLabel.setText("Punteggio: "
+                + controller.getAstronaut().getReputation());
 
         cluesList.getItems().clear();
 

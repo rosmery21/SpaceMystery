@@ -3,12 +3,15 @@ package it.unicam.cs.mpgc.rpg126604.controller;
 
 import it.unicam.cs.mpgc.rpg126604.interfaces.GameRepository;
 import it.unicam.cs.mpgc.rpg126604.model.*;
+import it.unicam.cs.mpgc.rpg126604.repository.GameDataLoader;
 
 import java.util.*;
 
 public class GameController {
 
     private final GameRepository repository;
+    private final GameDataLoader dataLoader;
+
     private Astronaut astronaut;
     private final Map<String, Location> locations;
     private final Map<String, NPC> npcs;
@@ -20,8 +23,9 @@ public class GameController {
         }
 
         this.repository = repository;
-        this.locations = new HashMap<>();
-        this.npcs = new HashMap<>();
+        this.dataLoader = new GameDataLoader();
+        this.locations = new LinkedHashMap<>();
+        this.npcs = new LinkedHashMap<>();
 
         initializeGame();
     }
@@ -29,60 +33,35 @@ public class GameController {
     private void initializeGame() {
         astronaut = new Astronaut("Alex");
 
-        Location salaComandi = new Location(
-                "comandi",
-                "Sala Comandi",
-                "Il centro di controllo dell'astronave. Alcuni sistemi non rispondono."
-        );
+        // Caricamento delle stanze dal file locations.json
+        for (Location location : dataLoader.loadLocations()) {
+            locations.put(location.getId(), location);
+        }
 
-        Location laboratorio = new Location(
-                "laboratorio",
-                "Laboratorio Scientifico",
-                "Strumenti sparsi ovunque. Qualcuno ha cancellato i risultati delle analisi."
-        );
+        // Caricamento degli indizi dal file clues.json
+        for (Clue clue : dataLoader.loadClues()) {
+            Location location = locations.get(clue.getLocationId());
 
-        Location salaMotori = new Location(
-                "motori",
-                "Sala Motori",
-                "Le luci lampeggiano. Si sentono strani rumori provenire dai macchinari."
-        );
+            if (location != null) {
+                location.addClue(clue);
+            }
+        }
 
-        Clue clue1 = new Clue(
-                "c1",
-                "Un registro di bordo con alcune pagine mancanti",
-                "comandi"
-        );
+        // Caricamento degli NPC dal file npcs.json
+        for (NPC npc : dataLoader.loadNPCs()) {
+            npcs.put(npc.getId(), npc);
+        }
 
-        Clue clue2 = new Clue(
-                "c2",
-                "Una provetta contenente una sostanza sconosciuta",
-                "laboratorio"
-        );
+        // La partita inizia nella Sala Comandi
+        currentLocation = locations.get("sala_comandi");
 
-        Clue clue3 = new Clue(
-                "c3",
-                "Tracce di manomissione nel sistema di ventilazione",
-                "motori"
-        );
+        if (currentLocation == null) {
+            throw new IllegalStateException(
+                    "La Sala Comandi non è presente in locations.json"
+            );
+        }
 
-        salaComandi.addClue(clue1);
-        laboratorio.addClue(clue2);
-        salaMotori.addClue(clue3);
-
-        NPC medico = new NPC("n1", "Dott.ssa Vega", "Medico di bordo");
-        medico.addDialogue(
-                "Ho trovato qualcosa di strano nelle ultime analisi..."
-        );
-        medico.addClue(clue2);
-
-        locations.put(salaComandi.getId(), salaComandi);
-        locations.put(laboratorio.getId(), laboratorio);
-        locations.put(salaMotori.getId(), salaMotori);
-
-        npcs.put(medico.getId(), medico);
-
-        currentLocation = salaComandi;
-        astronaut.visitLocation(salaComandi);
+        astronaut.visitLocation(currentLocation);
     }
 
     public Astronaut getAstronaut() {

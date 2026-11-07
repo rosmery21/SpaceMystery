@@ -5,42 +5,39 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class NPC {
+public class NPC extends GameCharacter {
 
-    private final String id;
-    private final String name;
-    private final String role;
+    private String id;
     private final List<String> dialogues;
     private final List<Clue> cluesProvided;
 
-    public NPC(String id, String name, String role) {
-        if (id == null || id.isBlank()) {
-            throw new IllegalArgumentException("ID non valido");
-        }
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Nome non valido");
-        }
-        if (role == null || role.isBlank()) {
-            throw new IllegalArgumentException("Ruolo non valido");
-        }
-
-        this.id = id;
-        this.name = name;
-        this.role = role;
+    // Costruttore vuoto per la deserializzazione JSON
+    public NPC() {
+        super();
         this.dialogues = new ArrayList<>();
         this.cluesProvided = new ArrayList<>();
     }
 
+    public NPC(String id, String name, String role) {
+        super(name, role);
+
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("ID non valido");
+        }
+
+        this.id = id;
+        this.dialogues = new ArrayList<>();
+        this.cluesProvided = new ArrayList<>();
+    }
+
+    @Override
+    public void presentati() {
+        System.out.println("Sono " + getName()
+                + ", " + getRole() + " della stazione spaziale.");
+    }
+
     public String getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getRole() {
-        return role;
     }
 
     public void addDialogue(String dialogue) {
@@ -75,11 +72,11 @@ public class NPC {
         if (!(obj instanceof NPC)) return false;
 
         NPC other = (NPC) obj;
-        return this.id.equals(other.id);
+        return id != null && id.equals(other.id);
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return id != null ? id.hashCode() : 0;
     }
 }

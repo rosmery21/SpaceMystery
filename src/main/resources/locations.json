@@ -1,0 +1,24 @@
+
+[
+  {
+    "id": "sala_comandi",
+    "name": "Sala Comandi",
+    "description": "Il centro di controllo della stazione spaziale. I monitor mostrano dati di navigazione e segnali anomali.",
+    "clues": [],
+    "visited": false
+  },
+  {
+    "id": "laboratorio",
+    "name": "Laboratorio Scientifico",
+    "description": "Un laboratorio pieno di strumenti di analisi, campioni misteriosi e terminali di ricerca.",
+    "clues": [],
+    "visited": false
+  },
+  {
+    "id": "sala_motori",
+    "name": "Sala Motori",
+    "description": "Il cuore energetico della stazione. Il rumore dei generatori nasconde qualcosa di insolito.",
+    "clues": [],
+    "visited": false
+  }
+]
