@@ -99,6 +99,14 @@ public class GameView {
         Label roomsTitle = new Label("Esplorazione");
         roomsTitle.getStyleClass().add("section-title");
 
+        // Nuovo pulsante per aprire la mappa della stazione.
+        Button mapButton = new Button("Mappa della stazione");
+        mapButton.setMaxWidth(Double.MAX_VALUE);
+        mapButton.setOnAction(event -> {
+            MapView mapView = new MapView(controller, stage);
+            mapView.show();
+        });
+
         VBox roomsBox = new VBox(10);
 
         for (Location location : controller.getAllLocations()) {
@@ -129,6 +137,7 @@ public class GameView {
 
         panel.getChildren().addAll(
                 roomsTitle,
+                mapButton,
                 roomsBox,
                 descriptionTitle,
                 descriptionArea,
