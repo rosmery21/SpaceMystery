@@ -4,12 +4,15 @@ package it.unicam.cs.mpgc.rpg126604.view;
 import it.unicam.cs.mpgc.rpg126604.controller.GameController;
 import it.unicam.cs.mpgc.rpg126604.model.*;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class GameView {
 
@@ -20,6 +23,9 @@ public class GameView {
     private TextArea descriptionArea;
     private ListView<String> cluesList;
     private Label reputationLabel;
+    private Label cluesCountLabel;
+    private Label messageLabel;
+    private Timeline messageTimeline;
 
     public GameView(GameController controller, Stage stage) {
         this.controller = controller;
@@ -32,12 +38,14 @@ public class GameView {
 
         root.setTop(buildTopPanel());
         root.setCenter(buildMainPanel());
+        root.setBottom(buildBottomPanel());
 
         Scene scene = new Scene(root, 1100, 750);
 
-        // Colleghiamo il foglio di stile di SpaceMystery.
-        String css = getClass().getResource("/css/style.css")
+        String css = getClass()
+                .getResource("/css/style.css")
                 .toExternalForm();
+
         scene.getStylesheets().add(css);
 
         stage.setTitle("SpaceMystery - Gioco di Ruolo");
@@ -57,6 +65,7 @@ public class GameView {
 
         locationLabel = new Label("Posizione: ");
         reputationLabel = new Label("Reputazione: 0");
+        cluesCountLabel = new Label("Indizi: 0");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -65,6 +74,7 @@ public class GameView {
                 gameTitle,
                 locationLabel,
                 spacer,
+                cluesCountLabel,
                 reputationLabel
         );
 
@@ -73,7 +83,7 @@ public class GameView {
 
     private HBox buildMainPanel() {
         HBox main = new HBox(15);
-        main.setPadding(new Insets(15, 0, 0, 0));
+        main.setPadding(new Insets(15, 0, 15, 0));
 
         VBox explorationPanel = buildExplorationPanel();
         VBox notebookPanel = buildNotebookPanel();
@@ -87,7 +97,10 @@ public class GameView {
         explorationPanel.setPrefWidth(520);
         notebookPanel.setPrefWidth(480);
 
-        main.getChildren().addAll(explorationPanel, notebookPanel);
+        main.getChildren().addAll(
+                explorationPanel,
+                notebookPanel
+        );
 
         return main;
     }
@@ -96,13 +109,22 @@ public class GameView {
         VBox panel = new VBox(15);
         panel.getStyleClass().add("game-panel");
 
-        Label roomsTitle = new Label("Esplorazione");
+        Label roomsTitle = new Label("ESPLORAZIONE");
         roomsTitle.getStyleClass().add("section-title");
 
-        // Nuovo pulsante per aprire la mappa della stazione.
-        Button mapButton = new Button("Mappa della stazione");
+        Label roomsHint = new Label(
+                "Esplora gli ambienti della stazione spaziale."
+        );
+        roomsHint.setWrapText(true);
+
+        Button mapButton = new Button("MAPPA DELLA STAZIONE");
         mapButton.setMaxWidth(Double.MAX_VALUE);
+
         mapButton.setOnAction(event -> {
+            if (messageTimeline != null) {
+                messageTimeline.stop();
+            }
+
             MapView mapView = new MapView(controller, stage);
             mapView.show();
         });
@@ -116,12 +138,20 @@ public class GameView {
             button.setOnAction(event -> {
                 controller.moveToLocation(location.getId());
                 updateView();
+
+                showMessage(
+                        "Alex ha raggiunto: " + location.getName()
+                );
             });
 
             roomsBox.getChildren().add(button);
         }
 
-        Label descriptionTitle = new Label("Descrizione della stanza");
+        Separator separator = new Separator();
+
+        Label descriptionTitle = new Label(
+                "DESCRIZIONE DELLA STANZA"
+        );
         descriptionTitle.getStyleClass().add("section-title");
 
         descriptionArea = new TextArea();
@@ -131,14 +161,16 @@ public class GameView {
 
         VBox.setVgrow(descriptionArea, Priority.ALWAYS);
 
-        Button collectButton = new Button("Raccogli indizi");
+        Button collectButton = new Button("RACCOGLI INDIZI");
         collectButton.setMaxWidth(Double.MAX_VALUE);
         collectButton.setOnAction(event -> collectClues());
 
         panel.getChildren().addAll(
                 roomsTitle,
+                roomsHint,
                 mapButton,
                 roomsBox,
+                separator,
                 descriptionTitle,
                 descriptionArea,
                 collectButton
@@ -151,12 +183,16 @@ public class GameView {
         VBox panel = new VBox(15);
         panel.getStyleClass().add("game-panel");
 
-        Label notebookTitle = new Label("Taccuino investigativo");
+        Label notebookTitle = new Label("TACCUINO INVESTIGATIVO");
         notebookTitle.getStyleClass().add("section-title");
+
+        Label notebookHint = new Label(
+                "Indizi raccolti durante la missione:"
+        );
+        notebookHint.setWrapText(true);
 
         cluesList = new ListView<>();
 
-        // Ogni indizio viene mostrato su più righe, se necessario.
         cluesList.setCellFactory(listView -> new ListCell<>() {
 
             private final Label clueLabel = new Label();
@@ -165,7 +201,6 @@ public class GameView {
                 clueLabel.setWrapText(true);
                 clueLabel.setMaxWidth(Double.MAX_VALUE);
 
-                // La larghezza del testo segue quella del taccuino.
                 clueLabel.prefWidthProperty().bind(
                         listView.widthProperty().subtract(45)
                 );
@@ -188,36 +223,112 @@ public class GameView {
 
         VBox.setVgrow(cluesList, Priority.ALWAYS);
 
-        Button reportButton = new Button("Crea rapporto");
+        Separator separator = new Separator();
+
+        Label reportTitle = new Label("RAPPORTI");
+        reportTitle.getStyleClass().add("section-title");
+
+        Label reportHint = new Label(
+                "Pubblica le tue scoperte per aumentare "
+                        + "la reputazione."
+        );
+        reportHint.setWrapText(true);
+
+        Button reportButton = new Button("CREA RAPPORTO");
         reportButton.setMaxWidth(Double.MAX_VALUE);
         reportButton.setOnAction(event -> writeReport());
 
         panel.getChildren().addAll(
                 notebookTitle,
+                notebookHint,
                 cluesList,
+                separator,
+                reportTitle,
+                reportHint,
                 reportButton
         );
 
         return panel;
     }
 
+    private HBox buildBottomPanel() {
+        HBox bottom = new HBox();
+        bottom.setAlignment(Pos.CENTER_LEFT);
+        bottom.setPadding(new Insets(12));
+
+        bottom.getStyleClass().add("top-panel");
+
+        messageLabel = new Label(
+                "Missione avviata. Esplora la stazione spaziale!"
+        );
+
+        bottom.getChildren().add(messageLabel);
+
+        return bottom;
+    }
+
+    private void showMessage(String message) {
+        if (messageTimeline != null) {
+            messageTimeline.stop();
+        }
+
+        messageLabel.setText("> " + message);
+        messageLabel.setStyle("-fx-text-fill: #7dd3fc;");
+
+        messageTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(4), event -> {
+                    messageLabel.setText(
+                            "> In attesa della prossima azione..."
+                    );
+
+                    messageLabel.setStyle(
+                            "-fx-text-fill: #e5edf8;"
+                    );
+                })
+        );
+
+        messageTimeline.play();
+    }
+
     private void collectClues() {
         Location current = controller.getCurrentLocation();
+
+        int collected = 0;
 
         for (Clue clue : current.getClues()) {
             if (!clue.isDiscovered()) {
                 controller.collectClue(clue);
+                collected++;
             }
         }
 
         updateView();
+
+        if (collected > 0) {
+            showMessage(
+                    "Hai raccolto " + collected
+                            + " nuovi indizi in "
+                            + current.getName() + "!"
+            );
+        } else {
+            showMessage(
+                    "Nessun nuovo indizio disponibile in questa stanza."
+            );
+        }
     }
 
     private void writeReport() {
         if (controller.getAstronaut().getNotebook().isEmpty()) {
             showAlert(
-                    "Devi raccogliere almeno un indizio prima di creare un rapporto."
+                    "Devi raccogliere almeno un indizio "
+                            + "prima di creare un rapporto."
             );
+
+            showMessage(
+                    "Impossibile creare un rapporto: "
+                            + "nessun indizio raccolto."
+            );
+
             return;
         }
 
@@ -237,9 +348,16 @@ public class GameView {
                 controller.publishReport(report);
                 updateView();
 
+                showMessage(
+                        "Rapporto pubblicato! Reputazione: "
+                                + controller.getAstronaut()
+                                .getReputation()
+                );
+
                 showAlert(
                         "Rapporto completato! Punteggio: "
-                                + controller.getAstronaut().getReputation()
+                                + controller.getAstronaut()
+                                .getReputation()
                 );
             }
         });
@@ -248,7 +366,10 @@ public class GameView {
     private void updateView() {
         Location current = controller.getCurrentLocation();
 
-        locationLabel.setText("Posizione: " + current.getName());
+        locationLabel.setText(
+                "Posizione: " + current.getName()
+        );
+
         descriptionArea.setText(current.getDescription());
 
         reputationLabel.setText(
@@ -256,15 +377,26 @@ public class GameView {
                         + controller.getAstronaut().getReputation()
         );
 
+        cluesCountLabel.setText(
+                "Indizi: "
+                        + controller.getAstronaut()
+                        .getNotebook().size()
+        );
+
         cluesList.getItems().clear();
 
         for (Clue clue : controller.getAstronaut().getNotebook()) {
-            cluesList.getItems().add(clue.getDescription());
+            cluesList.getItems().add(
+                    clue.getDescription()
+            );
         }
     }
 
     private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(
+                Alert.AlertType.INFORMATION
+        );
+
         alert.setContentText(message);
         alert.showAndWait();
     }
