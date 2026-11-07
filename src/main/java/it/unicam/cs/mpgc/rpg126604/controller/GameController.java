@@ -68,6 +68,11 @@ public class GameController {
         return astronaut;
     }
 
+    // Restituisce le statistiche aggiornate della partita
+    public GameStats getGameStats() {
+        return new GameStats(astronaut);
+    }
+
     public Location getCurrentLocation() {
         return currentLocation;
     }
