@@ -1,0 +1,85 @@
+
+/* SPACE MYSTERY - Tema spaziale */
+
+.root {
+    -fx-background-color: #0b1020;
+    -fx-font-family: "Segoe UI", "Arial";
+    -fx-font-size: 14px;
+}
+
+/* Testi */
+.label {
+    -fx-text-fill: #e5edf8;
+}
+
+.section-title {
+    -fx-text-fill: #7dd3fc;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+/* Pannelli */
+.game-panel {
+    -fx-background-color: #15243a;
+    -fx-background-radius: 10;
+    -fx-padding: 15;
+}
+
+.top-panel {
+    -fx-background-color: #19345b;
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+}
+
+/* Pulsanti */
+.button {
+    -fx-background-color: #244360;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 10 14;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #2864a0;
+}
+
+.button:pressed {
+    -fx-background-color: #12304f;
+}
+
+/* Descrizione delle stanze */
+.text-area {
+    -fx-background-color: #15243a;
+    -fx-control-inner-background: #15243a;
+    -fx-text-fill: #e5edf8;
+    -fx-highlight-fill: #2864a0;
+    -fx-highlight-text-fill: white;
+}
+
+.text-area .content {
+    -fx-background-color: #15243a;
+}
+
+/* Taccuino degli indizi */
+.list-view {
+    -fx-background-color: #15243a;
+    -fx-control-inner-background: #15243a;
+    -fx-background-insets: 0;
+}
+
+.list-cell {
+    -fx-background-color: #223b58;
+    -fx-text-fill: #e5edf8;
+    -fx-padding: 10;
+    -fx-background-insets: 3 0 3 0;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #2864a0;
+    -fx-text-fill: white;
+}
+
+.list-cell:empty {
+    -fx-background-color: transparent;
+}
