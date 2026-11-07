@@ -1,6 +1,8 @@
 
 package it.unicam.cs.mpgc.rpg126604.model;
 
+import it.unicam.cs.mpgc.rpg126604.interfaces.ReputationCalculator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,8 +67,20 @@ public class Astronaut extends GameCharacter {
             throw new IllegalArgumentException("Rapporto non valido");
         }
 
+        // La regola di calcolo è definita con una lambda.
+        ReputationCalculator calculator =
+                r -> r.getCluesUsed().size() * 10;
+
+        // Evitiamo di assegnare punti più volte
+        // per lo stesso rapporto.
+        if (report.isPublished()) {
+            throw new IllegalStateException(
+                    "Questo rapporto è già stato pubblicato"
+            );
+        }
+
         report.publish();
-        reputation += report.getReputationValue();
+        reputation += calculator.calculate(report);
     }
 
     public void visitLocation(Location location) {
