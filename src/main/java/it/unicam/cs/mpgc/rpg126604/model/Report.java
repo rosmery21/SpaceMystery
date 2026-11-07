@@ -1,11 +1,13 @@
 
 package it.unicam.cs.mpgc.rpg126604.model;
 
+import it.unicam.cs.mpgc.rpg126604.interfaces.Publishable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Report {
+public class Report implements Publishable {
 
     private final String id;
     private String title;
@@ -40,6 +42,7 @@ public class Report {
         return content;
     }
 
+    @Override
     public boolean isPublished() {
         return published;
     }
@@ -62,6 +65,7 @@ public class Report {
         }
     }
 
+    @Override
     public void publish() {
         if (cluesUsed.isEmpty()) {
             throw new IllegalStateException(

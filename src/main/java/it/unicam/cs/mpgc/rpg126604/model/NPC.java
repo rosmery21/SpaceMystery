@@ -1,11 +1,13 @@
 
 package it.unicam.cs.mpgc.rpg126604.model;
 
+import it.unicam.cs.mpgc.rpg126604.interfaces.Identifiable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class NPC extends GameCharacter {
+public class NPC extends GameCharacter implements Identifiable {
 
     private String id;
     private final List<String> dialogues;
@@ -36,6 +38,7 @@ public class NPC extends GameCharacter {
                 + ", " + getRole() + " della stazione spaziale.");
     }
 
+    @Override
     public String getId() {
         return id;
     }
