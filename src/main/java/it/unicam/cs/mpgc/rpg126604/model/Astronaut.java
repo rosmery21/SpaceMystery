@@ -12,28 +12,37 @@ import java.util.List;
  * durante la missione SpaceMystery.
  *
  * Estende {@link GameCharacter} e gestisce il taccuino
- * degli indizi, i rapporti investigativi e i luoghi visitati.
+ * degli indizi, i rapporti investigativi, i luoghi visitati,
+ * le statistiche del personaggio e le missioni.
  *
- * La reputazione aumenta ogni volta che viene pubblicato
- * un rapporto investigativo.
+ * La reputazione aumenta quando vengono pubblicati rapporti
+ * investigativi o completate missioni.
  *
  * @version 1.0
  */
 public class Astronaut extends GameCharacter {
 
     private int reputation;
+    private PlayerStats stats;
+
     private final List<Clue> notebook;
     private final List<Report> reports;
     private final List<Location> visitedLocations;
+    private final List<Quest> activeQuests;
+    private final List<Quest> completedQuests;
 
     /**
      * Costruttore vuoto necessario per la deserializzazione JSON.
      */
     public Astronaut() {
         super();
+        this.reputation = 0;
+        this.stats = new PlayerStats();
         this.notebook = new ArrayList<>();
         this.reports = new ArrayList<>();
         this.visitedLocations = new ArrayList<>();
+        this.activeQuests = new ArrayList<>();
+        this.completedQuests = new ArrayList<>();
     }
 
     /**
@@ -46,9 +55,12 @@ public class Astronaut extends GameCharacter {
         super(name, "Astronauta");
 
         this.reputation = 0;
+        this.stats = new PlayerStats();
         this.notebook = new ArrayList<>();
         this.reports = new ArrayList<>();
         this.visitedLocations = new ArrayList<>();
+        this.activeQuests = new ArrayList<>();
+        this.completedQuests = new ArrayList<>();
     }
 
     /**
@@ -70,9 +82,18 @@ public class Astronaut extends GameCharacter {
     }
 
     /**
+     * Restituisce le statistiche del personaggio.
+     *
+     * @return le statistiche dell'astronauta
+     */
+    public PlayerStats getStats() {
+        return stats;
+    }
+
+    /**
      * Aggiunge un indizio al taccuino dell'astronauta.
-     * Se l'indizio non è già presente, viene aggiunto
-     * e marcato come scoperto.
+     * Se l'indizio non è già presente, viene aggiunto,
+     * marcato come scoperto e assegna esperienza.
      *
      * @param clue l'indizio da aggiungere
      * @throws IllegalArgumentException se l'indizio è nullo
@@ -85,6 +106,7 @@ public class Astronaut extends GameCharacter {
         if (!notebook.contains(clue)) {
             notebook.add(clue);
             clue.discover();
+            stats.addExperience(20);
         }
     }
 
@@ -107,7 +129,7 @@ public class Astronaut extends GameCharacter {
 
     /**
      * Pubblica un rapporto investigativo e aggiorna
-     * la reputazione dell'astronauta.
+     * la reputazione e l'esperienza dell'astronauta.
      *
      * Il calcolo della reputazione utilizza
      * l'interfaccia funzionale {@link ReputationCalculator}
@@ -122,12 +144,9 @@ public class Astronaut extends GameCharacter {
             throw new IllegalArgumentException("Rapporto non valido");
         }
 
-        // La regola di calcolo è definita con una lambda.
         ReputationCalculator calculator =
                 r -> r.getCluesUsed().size() * 10;
 
-        // Evitiamo di assegnare punti più volte
-        // per lo stesso rapporto.
         if (report.isPublished()) {
             throw new IllegalStateException(
                     "Questo rapporto è già stato pubblicato"
@@ -136,12 +155,13 @@ public class Astronaut extends GameCharacter {
 
         report.publish();
         reputation += calculator.calculate(report);
+        stats.addExperience(50);
     }
 
     /**
      * Registra la visita dell'astronauta a un luogo.
-     * Se il luogo non è già stato visitato, viene aggiunto
-     * alla lista e marcato come visitato.
+     * Se il luogo non è già stato visitato, viene aggiunto,
+     * marcato come visitato e assegna esperienza.
      *
      * @param location il luogo da visitare
      * @throws IllegalArgumentException se il luogo è nullo
@@ -154,6 +174,42 @@ public class Astronaut extends GameCharacter {
         if (!visitedLocations.contains(location)) {
             visitedLocations.add(location);
             location.visit();
+            stats.addExperience(10);
+        }
+    }
+
+    /**
+     * Aggiunge una missione alle missioni attive.
+     *
+     * @param quest la missione da aggiungere
+     */
+    public void addQuest(Quest quest) {
+        if (quest == null) {
+            throw new IllegalArgumentException("Missione non valida");
+        }
+
+        if (!activeQuests.contains(quest)) {
+            activeQuests.add(quest);
+        }
+    }
+
+    /**
+     * Completa una missione attiva e assegna
+     * esperienza e reputazione all'astronauta.
+     *
+     * @param quest la missione completata
+     */
+    public void completeQuest(Quest quest) {
+        if (quest == null) {
+            throw new IllegalArgumentException("Missione non valida");
+        }
+
+        if (activeQuests.contains(quest)) {
+            activeQuests.remove(quest);
+            completedQuests.add(quest);
+
+            stats.addExperience(quest.getExperienceReward());
+            reputation += quest.getExperienceReward() / 10;
         }
     }
 
@@ -182,5 +238,23 @@ public class Astronaut extends GameCharacter {
      */
     public List<Location> getVisitedLocations() {
         return Collections.unmodifiableList(visitedLocations);
+    }
+
+    /**
+     * Restituisce le missioni attive.
+     *
+     * @return lista non modificabile delle missioni attive
+     */
+    public List<Quest> getActiveQuests() {
+        return Collections.unmodifiableList(activeQuests);
+    }
+
+    /**
+     * Restituisce le missioni completate.
+     *
+     * @return lista non modificabile delle missioni completate
+     */
+    public List<Quest> getCompletedQuests() {
+        return Collections.unmodifiableList(completedQuests);
     }
 }

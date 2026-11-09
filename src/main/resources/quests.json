@@ -1,0 +1,54 @@
+
+[
+  {
+    "id": "quest_segnale",
+    "title": "Il segnale misterioso",
+    "description": "Indaga sull'origine di un segnale sconosciuto ricevuto dalla stazione spaziale.",
+    "objectives": [
+      "Esplora la Sala Comandi",
+      "Raccogli un indizio sul segnale",
+      "Parla con Vega"
+    ],
+    "completedObjectives": [
+      false,
+      false,
+      false
+    ],
+    "experienceReward": 100,
+    "completed": false
+  },
+  {
+    "id": "quest_laboratorio",
+    "title": "Anomalie scientifiche",
+    "description": "Esamina le anomalie rilevate nel Laboratorio Scientifico e cerca di comprenderne la causa.",
+    "objectives": [
+      "Visita il Laboratorio Scientifico",
+      "Raccogli un indizio scientifico",
+      "Parla con Nova"
+    ],
+    "completedObjectives": [
+      false,
+      false,
+      false
+    ],
+    "experienceReward": 150,
+    "completed": false
+  },
+  {
+    "id": "quest_motori",
+    "title": "Il mistero dei motori",
+    "description": "Scopri cosa sta causando i malfunzionamenti nella Sala Motori.",
+    "objectives": [
+      "Esplora la Sala Motori",
+      "Raccogli un indizio sui malfunzionamenti",
+      "Parla con Orion"
+    ],
+    "completedObjectives": [
+      false,
+      false,
+      false
+    ],
+    "experienceReward": 200,
+    "completed": false
+  }
+]

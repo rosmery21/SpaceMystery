@@ -1,4 +1,3 @@
-
 package it.unicam.cs.mpgc.rpg126604.view;
 
 import it.unicam.cs.mpgc.rpg126604.controller.GameController;
@@ -22,8 +21,11 @@ public class GameView {
     private Label locationLabel;
     private TextArea descriptionArea;
     private ListView<String> cluesList;
+    private ListView<String> questsList;
     private Label reputationLabel;
     private Label cluesCountLabel;
+    private Label levelLabel;
+    private Label experienceLabel;
     private Label messageLabel;
     private Timeline messageTimeline;
 
@@ -66,6 +68,8 @@ public class GameView {
         locationLabel = new Label("Posizione: ");
         reputationLabel = new Label("Reputazione: 0");
         cluesCountLabel = new Label("Indizi: 0");
+        levelLabel = new Label("Livello: 1");
+        experienceLabel = new Label("XP: 0/100");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -74,6 +78,8 @@ public class GameView {
                 gameTitle,
                 locationLabel,
                 spacer,
+                levelLabel,
+                experienceLabel,
                 cluesCountLabel,
                 reputationLabel
         );
@@ -165,6 +171,10 @@ public class GameView {
         collectButton.setMaxWidth(Double.MAX_VALUE);
         collectButton.setOnAction(event -> collectClues());
 
+        Button dialogueButton = new Button("PARLA CON L'EQUIPAGGIO");
+        dialogueButton.setMaxWidth(Double.MAX_VALUE);
+        dialogueButton.setOnAction(event -> showNPCDialog());
+
         panel.getChildren().addAll(
                 roomsTitle,
                 roomsHint,
@@ -173,7 +183,8 @@ public class GameView {
                 separator,
                 descriptionTitle,
                 descriptionArea,
-                collectButton
+                collectButton,
+                dialogueButton
         );
 
         return panel;
@@ -223,6 +234,33 @@ public class GameView {
 
         VBox.setVgrow(cluesList, Priority.ALWAYS);
 
+        Label questsTitle = new Label("MISSIONI");
+        questsTitle.getStyleClass().add("section-title");
+
+        questsList = new ListView<>();
+        questsList.setPrefHeight(175);
+        questsList.setMinHeight(110);
+        questsList.setCellFactory(listView -> new ListCell<>() {
+            private final Label questLabel = new Label();
+            {
+                questLabel.setWrapText(true);
+                questLabel.prefWidthProperty().bind(
+                        listView.widthProperty().subtract(45)
+                );
+            }
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(null);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    questLabel.setText(item);
+                    setGraphic(questLabel);
+                }
+            }
+        });
+
         Separator separator = new Separator();
 
         Label reportTitle = new Label("RAPPORTI");
@@ -242,6 +280,8 @@ public class GameView {
                 notebookTitle,
                 notebookHint,
                 cluesList,
+                questsTitle,
+                questsList,
                 separator,
                 reportTitle,
                 reportHint,
@@ -317,6 +357,101 @@ public class GameView {
         }
     }
 
+    /**
+     * Permette di scegliere un membro dell'equipaggio con cui parlare.
+     */
+    private void showNPCDialog() {
+        java.util.List<NPC> crew = new java.util.ArrayList<>(controller.getAllNPCs());
+        if (crew.isEmpty()) {
+            showMessage("Nessun membro dell'equipaggio disponibile.");
+            return;
+        }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(
+                crew.get(0).getName(),
+                crew.stream().map(NPC::getName).toList()
+        );
+        dialog.setTitle("Equipaggio della stazione");
+        dialog.setHeaderText("Con chi vuoi parlare?");
+        dialog.setContentText("Membro dell'equipaggio:");
+
+        dialog.showAndWait().ifPresent(selectedName -> {
+            for (NPC npc : crew) {
+                if (npc.getName().equals(selectedName)) {
+                    showDialogueChoices(npc);
+                    return;
+                }
+            }
+        });
+    }
+
+    /**
+     * Visualizza le risposte disponibili e il requisito di carisma.
+     */
+    private void showDialogueChoices(NPC npc) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Dialogo con " + npc.getName());
+        dialog.setHeaderText(npc.getName() + " — " + npc.getRole());
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        VBox content = new VBox(12);
+        content.setPadding(new Insets(10));
+
+        Label hint = new Label("Carisma di Alex: "
+                + controller.getPlayerStats().getCharisma());
+        content.getChildren().add(hint);
+
+        Label responseLabel = new Label("Seleziona una domanda per leggere la risposta.");
+        responseLabel.setWrapText(true);
+        responseLabel.setMaxWidth(Double.MAX_VALUE);
+        responseLabel.setMinHeight(65);
+
+        java.util.List<DialogueChoice> choices = controller.getDialogueChoices(npc.getId());
+        if (choices.isEmpty()) {
+            Label noChoices = new Label("Nessuna scelta di dialogo disponibile.");
+            noChoices.setWrapText(true);
+            content.getChildren().add(noChoices);
+        }
+
+        for (DialogueChoice choice : choices) {
+            boolean allowed = controller.canSelectDialogueChoice(choice);
+            String label = choice.getText()
+                    + " (CAR " + choice.getRequiredCharisma() + ")"
+                    + (allowed ? "" : " — Carisma insufficiente");
+
+            Button option = new Button(label);
+            option.setMaxWidth(Double.MAX_VALUE);
+            option.setWrapText(true);
+            option.setDisable(!allowed);
+            option.setOnAction(event -> {
+                try {
+                    String response = controller.selectDialogueChoice(npc.getId(), choice);
+                    responseLabel.setText(npc.getName() + ":\n" +
+                            (response == null || response.isBlank()
+                                    ? "Nessuna risposta disponibile."
+                                    : response));
+                    updateView();
+                    hint.setText("Carisma di Alex: "
+                            + controller.getPlayerStats().getCharisma());
+                    showMessage("Dialogo completato con " + npc.getName() + ".");
+                } catch (IllegalArgumentException | IllegalStateException exception) {
+                    responseLabel.setText(exception.getMessage());
+                }
+            });
+            content.getChildren().add(option);
+        }
+
+        Separator separator = new Separator();
+        content.getChildren().addAll(separator, responseLabel);
+
+        ScrollPane scroll = new ScrollPane(content);
+        scroll.setFitToWidth(true);
+        scroll.setPrefViewportWidth(480);
+        scroll.setPrefViewportHeight(360);
+        dialog.getDialogPane().setContent(scroll);
+        dialog.showAndWait();
+    }
+
     private void writeReport() {
         if (controller.getAstronaut().getNotebook().isEmpty()) {
             showAlert(
@@ -366,6 +501,13 @@ public class GameView {
     private void updateView() {
         Location current = controller.getCurrentLocation();
 
+        PlayerStats stats = controller.getPlayerStats();
+        levelLabel.setText("Livello: " + stats.getLevel());
+        experienceLabel.setText(
+                "XP: " + stats.getExperience()
+                        + "/" + (stats.getLevel() * 100)
+        );
+
         locationLabel.setText(
                 "Posizione: " + current.getName()
         );
@@ -383,12 +525,35 @@ public class GameView {
                         .getNotebook().size()
         );
 
+        updateQuests();
+
         cluesList.getItems().clear();
 
         for (Clue clue : controller.getAstronaut().getNotebook()) {
             cluesList.getItems().add(
                     clue.getDescription()
             );
+        }
+    }
+
+    private void updateQuests() {
+        questsList.getItems().clear();
+
+        for (Quest quest : controller.getActiveQuests()) {
+            StringBuilder details = new StringBuilder(
+                    quest.getTitle() + " (" + quest.getCompletedObjectivesCount()
+                            + "/" + quest.getTotalObjectivesCount() + ")"
+            );
+            for (int i = 0; i < quest.getObjectives().size(); i++) {
+                details.append("\n")
+                        .append(quest.isObjectiveCompleted(i) ? "✓ " : "○ ")
+                        .append(quest.getObjectives().get(i));
+            }
+            questsList.getItems().add(details.toString());
+        }
+
+        for (Quest quest : controller.getCompletedQuests()) {
+            questsList.getItems().add("✓ " + quest.getTitle() + " — COMPLETATA");
         }
     }
 

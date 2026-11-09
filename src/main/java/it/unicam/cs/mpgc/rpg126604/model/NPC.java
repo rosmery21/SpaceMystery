@@ -12,12 +12,14 @@ public class NPC extends GameCharacter implements Identifiable {
     private String id;
     private final List<String> dialogues;
     private final List<Clue> cluesProvided;
+    private final List<DialogueChoice> dialogueChoices;
 
     // Costruttore vuoto per la deserializzazione JSON
     public NPC() {
         super();
         this.dialogues = new ArrayList<>();
         this.cluesProvided = new ArrayList<>();
+        this.dialogueChoices = new ArrayList<>();
     }
 
     public NPC(String id, String name, String role) {
@@ -30,6 +32,7 @@ public class NPC extends GameCharacter implements Identifiable {
         this.id = id;
         this.dialogues = new ArrayList<>();
         this.cluesProvided = new ArrayList<>();
+        this.dialogueChoices = new ArrayList<>();
     }
 
     @Override
@@ -61,12 +64,34 @@ public class NPC extends GameCharacter implements Identifiable {
         }
     }
 
+    /**
+     * Aggiunge una scelta di dialogo all'NPC.
+     *
+     * @param choice la scelta da aggiungere
+     */
+    public void addDialogueChoice(DialogueChoice choice) {
+        if (choice == null) {
+            throw new IllegalArgumentException("Scelta di dialogo non valida");
+        }
+
+        dialogueChoices.add(choice);
+    }
+
     public List<String> getDialogues() {
         return Collections.unmodifiableList(dialogues);
     }
 
     public List<Clue> getCluesProvided() {
         return Collections.unmodifiableList(cluesProvided);
+    }
+
+    /**
+     * Restituisce le scelte di dialogo disponibili.
+     *
+     * @return lista non modificabile delle scelte
+     */
+    public List<DialogueChoice> getDialogueChoices() {
+        return Collections.unmodifiableList(dialogueChoices);
     }
 
     @Override

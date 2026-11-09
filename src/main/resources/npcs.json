@@ -9,7 +9,30 @@
       "Ho scoperto delle anomalie nei campioni biologici, ma qualcuno ha modificato i dati.",
       "Controlla il Laboratorio Scientifico. Potresti trovare qualcosa di importante."
     ],
-    "cluesProvided": []
+    "cluesProvided": [],
+    "dialogueChoices": [
+      {
+        "text": "Può spiegarmi meglio le anomalie?",
+        "response": "I campioni biologici mostrano alterazioni che non riusciamo a spiegare.",
+        "requiredCharisma": 0,
+        "clueId": null,
+        "experienceReward": 10
+      },
+      {
+        "text": "Chi potrebbe aver modificato i dati?",
+        "response": "Non posso esserne certa, Alex, ma qualcuno ha utilizzato credenziali riservate.",
+        "requiredCharisma": 6,
+        "clueId": null,
+        "experienceReward": 20
+      },
+      {
+        "text": "Mi affidi tutti i dettagli dell'indagine.",
+        "response": "D'accordo. Controlla attentamente gli strumenti del Laboratorio Scientifico.",
+        "requiredCharisma": 7,
+        "clueId": null,
+        "experienceReward": 30
+      }
+    ]
   },
   {
     "id": "npc_orion",
@@ -20,7 +43,30 @@
       "Abbiamo rilevato un cambiamento inspiegabile nella rotta della stazione.",
       "Dobbiamo scoprire chi ha avuto accesso al sistema di navigazione."
     ],
-    "cluesProvided": []
+    "cluesProvided": [],
+    "dialogueChoices": [
+      {
+        "text": "Che cosa è successo alla rotta?",
+        "response": "La stazione ha modificato la propria traiettoria senza un ordine autorizzato.",
+        "requiredCharisma": 0,
+        "clueId": null,
+        "experienceReward": 10
+      },
+      {
+        "text": "Chi aveva accesso al sistema di navigazione?",
+        "response": "Solo alcuni membri dell'equipaggio. Dovremo verificare i registri di accesso.",
+        "requiredCharisma": 6,
+        "clueId": null,
+        "experienceReward": 20
+      },
+      {
+        "text": "Comandante, mi dica tutto quello che sa.",
+        "response": "Temo che qualcuno a bordo stia nascondendo informazioni importanti.",
+        "requiredCharisma": 8,
+        "clueId": null,
+        "experienceReward": 30
+      }
+    ]
   },
   {
     "id": "npc_nova",
@@ -31,6 +77,29 @@
       "Ho trovato tracce di una possibile manomissione al sistema energetico.",
       "Se vuoi capire cosa è successo, dovresti controllare la Sala Motori."
     ],
-    "cluesProvided": []
+    "cluesProvided": [],
+    "dialogueChoices": [
+      {
+        "text": "Quali problemi hanno i generatori?",
+        "response": "La distribuzione dell'energia è instabile e alcuni sistemi si spengono senza motivo.",
+        "requiredCharisma": 0,
+        "clueId": null,
+        "experienceReward": 10
+      },
+      {
+        "text": "Pensi che qualcuno abbia sabotato i motori?",
+        "response": "Ho trovato modifiche sospette nei parametri di sicurezza.",
+        "requiredCharisma": 6,
+        "clueId": null,
+        "experienceReward": 20
+      },
+      {
+        "text": "Nova, ho bisogno di conoscere ogni dettaglio.",
+        "response": "Allora devi esaminare i registri tecnici nella Sala Motori.",
+        "requiredCharisma": 7,
+        "clueId": null,
+        "experienceReward": 30
+      }
+    ]
   }
 ]
