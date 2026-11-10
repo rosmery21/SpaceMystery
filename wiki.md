@@ -34,6 +34,13 @@ Il progetto è sviluppato in **Java**, con interfaccia grafica **JavaFX**, appli
 - **Taccuino investigativo** — raccolta e visualizzazione degli indizi scoperti durante la missione.
 - **Sistema di rapporti** — creazione e pubblicazione di rapporti investigativi utilizzando gli indizi raccolti.
 - **Sistema di reputazione** — la reputazione di Alex aumenta in base agli indizi utilizzati nei rapporti.
+- **Dialoghi a scelta multipla** — conversazioni con Vega, Orion e Nova, con opzioni che richiedono un determinato livello di carisma.
+- **Sistema RPG** — statistiche di intelligenza, carisma e furtività, esperienza e avanzamento di livello.
+- **Sistema di missioni** — obiettivi da completare, avanzamento e visualizzazione delle missioni attive e completate.
+- **Livello di sospetto** — indicatore che aumenta con le azioni rischiose e può causare il fallimento della missione.
+- **Tempo limitato** — Alex ha 10 giorni per portare a termine la missione.
+- **Obiettivo attuale** — indicazioni dinamiche che guidano il giocatore nelle diverse fasi dell'indagine.
+- **Registro Missione** — messaggi sulle azioni effettuate e sugli eventi importanti.
 - **Persistenza dei dati** — salvataggio e caricamento dello stato di gioco in formato JSON.
 - **Schermata introduttiva** — presentazione del gioco con tutorial ed effetto di scrittura animata.
 
@@ -116,6 +123,18 @@ Rappresenta un rapporto investigativo creato da Alex.
 - Contribuisce al calcolo della reputazione.
 - Implementa `Identifiable` e `Publishable`.
 
+#### `PlayerStats`
+
+Gestisce le statistiche RPG di Alex: intelligenza, carisma, furtività, livello ed esperienza.
+
+#### `Quest`
+
+Rappresenta una missione con più obiettivi e ne tiene traccia fino al completamento.
+
+#### `DialogueChoice`
+
+Rappresenta un'opzione di dialogo con testo, risposta, requisito di carisma e possibile ricompensa in esperienza.
+
 #### `GameState`
 
 Rappresenta lo stato corrente del gioco.
@@ -134,6 +153,9 @@ Controller principale del gioco.
 - Coordina la raccolta degli indizi.
 - Gestisce la creazione e la pubblicazione dei rapporti investigativi.
 - Coordina il salvataggio e il caricamento dello stato di gioco.
+- Gestisce il livello di sospetto e i giorni rimanenti.
+- Aggiorna gli obiettivi delle missioni dopo esplorazione, raccolta di indizi e dialoghi.
+- Fornisce l'obiettivo corrente tramite `getCurrentObjective()`.
 
 ### Package `repository`
 
@@ -152,6 +174,7 @@ Classe responsabile del caricamento dei dati iniziali del gioco.
 - Carica gli ambienti della stazione.
 - Carica gli indizi disponibili.
 - Carica i personaggi non giocanti (NPC).
+- Carica le missioni definite in `quests.json`.
 
 ### Package `view`
 
@@ -162,6 +185,9 @@ Interfaccia grafica principale del gioco.
 - Visualizza le informazioni dell'ambiente corrente.
 - Permette di consultare il taccuino investigativo.
 - Gestisce le azioni del giocatore e la pubblicazione dei rapporti.
+- Mostra statistiche RPG, reputazione, sospetto, giorni rimanenti e missioni.
+- Visualizza l'obiettivo corrente e il Registro Missione.
+- Mostra il pulsante per raccogliere indizi solo se nella stanza ne restano da scoprire.
 
 #### `MapView`
 
@@ -215,6 +241,7 @@ Le informazioni iniziali del gioco sono definite in file JSON presenti nella car
 - `locations.json` — contiene gli ambienti della stazione spaziale.
 - `clues.json` — contiene gli indizi disponibili.
 - `npcs.json` — contiene i personaggi non giocanti.
+- `quests.json` — contiene le missioni e i relativi obiettivi.
 
 Questi dati vengono caricati all'avvio attraverso la classe `GameDataLoader`.
 
@@ -244,6 +271,14 @@ SpaceMystery è progettato per permettere l'aggiunta di nuovi contenuti e funzio
 
 Nuovi indizi possono essere definiti nel file `clues.json`, ampliando le possibilità investigative del giocatore.
 
+### Aggiungere nuove missioni
+
+È possibile definire nuove missioni e i loro obiettivi in `quests.json`, sfruttando il sistema di caricamento già presente.
+
+### Estendere le statistiche RPG
+
+La classe `PlayerStats` centralizza le statistiche e la progressione di Alex.
+
 ### Aggiungere un nuovo sistema di persistenza
 
 È possibile creare una nuova classe che implementa l'interfaccia `GameRepository`, ad esempio `DatabaseGameRepository`, per utilizzare un sistema di salvataggio diverso da JSON.
@@ -267,6 +302,8 @@ Ogni classe ha una responsabilità specifica:
 - `Astronaut` gestisce le informazioni e le attività del protagonista.
 - `GameDataLoader` si occupa del caricamento dei dati iniziali.
 - `JsonGameRepository` gestisce il salvataggio e il caricamento dello stato di gioco.
+- `PlayerStats` gestisce la progressione RPG.
+- `Quest` gestisce gli obiettivi di una missione.
 
 ### O — Open/Closed Principle
 
@@ -326,6 +363,8 @@ Gli aspetti principali del progetto da conoscere e saper spiegare sono:
 - La struttura MVC e le responsabilità dei diversi componenti.
 - L'applicazione dei principi SOLID.
 - L'utilizzo delle interfacce e dell'ereditarietà.
+- Il sistema RPG, i dialoghi a scelta multipla e il completamento delle missioni.
+- Il funzionamento di sospetto, giorni rimanenti e obiettivo corrente.
 - Il funzionamento delle Stream API e delle espressioni lambda.
 - Il salvataggio e il caricamento dei dati JSON tramite Gson.
 - Il funzionamento della mappa interattiva realizzata con JavaFX.
