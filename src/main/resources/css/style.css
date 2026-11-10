@@ -1,8 +1,7 @@
-
-/* SPACE MYSTERY - Tema spaziale */
+/* SPACE MYSTERY - Tema spaziale, adattamento del commit 99ea981 */
 
 .root {
-    -fx-background-color: #0b1020;
+    -fx-background-color: #080f20;
     -fx-font-family: "Segoe UI", "Arial";
     -fx-font-size: 14px;
 }
@@ -34,18 +33,23 @@
 /* Pulsanti */
 .button {
     -fx-background-color: #244360;
-    -fx-text-fill: white;
+    -fx-text-fill: #e5f5ff;
+    -fx-border-color: #4c91c5;
+    -fx-border-width: 2px;
     -fx-background-radius: 6;
+    -fx-border-radius: 6;
     -fx-padding: 10 14;
     -fx-cursor: hand;
 }
 
 .button:hover {
-    -fx-background-color: #2864a0;
+    -fx-background-color: #4c91c5;
+    -fx-text-fill: #071321;
 }
 
 .button:pressed {
     -fx-background-color: #12304f;
+    -fx-text-fill: white;
 }
 
 /* Descrizione delle stanze */
@@ -53,6 +57,8 @@
     -fx-background-color: #15243a;
     -fx-control-inner-background: #15243a;
     -fx-text-fill: #e5edf8;
+    -fx-border-color: #35658a;
+    -fx-border-width: 1px;
     -fx-highlight-fill: #2864a0;
     -fx-highlight-text-fill: white;
 }
@@ -65,6 +71,8 @@
 .list-view {
     -fx-background-color: #15243a;
     -fx-control-inner-background: #15243a;
+    -fx-border-color: #35658a;
+    -fx-border-width: 1px;
     -fx-background-insets: 0;
 }
 
@@ -82,4 +90,27 @@
 
 .list-cell:empty {
     -fx-background-color: transparent;
+}
+
+/* Separatore e barre di scorrimento: aggiunti come nel commit di Silvio */
+.separator {
+    -fx-opacity: 0.5;
+}
+
+.separator .line {
+    -fx-border-color: #4c91c5;
+    -fx-border-width: 1px;
+}
+
+.scroll-bar {
+    -fx-background-color: #101e33;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #35658a;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #4c91c5;
 }

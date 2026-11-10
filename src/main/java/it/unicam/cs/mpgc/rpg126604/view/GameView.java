@@ -3,15 +3,15 @@ package it.unicam.cs.mpgc.rpg126604.view;
 import it.unicam.cs.mpgc.rpg126604.controller.GameController;
 import it.unicam.cs.mpgc.rpg126604.model.*;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class GameView {
 
@@ -26,8 +26,12 @@ public class GameView {
     private Label cluesCountLabel;
     private Label levelLabel;
     private Label experienceLabel;
-    private Label messageLabel;
-    private Timeline messageTimeline;
+    private Label daysLabel;
+    private Canvas suspicionBar;
+    private Canvas experienceBar;
+    private Canvas reputationBar;
+    private VBox messageLog;
+    private boolean gameFinished;
 
     public GameView(GameController controller, Stage stage) {
         this.controller = controller;
@@ -55,6 +59,8 @@ public class GameView {
         stage.show();
 
         updateView();
+        addMessage("Missione SpaceMystery avviata. Hai "
+                + controller.getDaysRemaining() + " giorni per completarla.");
     }
 
     private HBox buildTopPanel() {
@@ -70,6 +76,8 @@ public class GameView {
         cluesCountLabel = new Label("Indizi: 0");
         levelLabel = new Label("Livello: 1");
         experienceLabel = new Label("XP: 0/100");
+        daysLabel = new Label("Giorni: 10");
+        suspicionBar = createBar(145, 12);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -81,7 +89,9 @@ public class GameView {
                 levelLabel,
                 experienceLabel,
                 cluesCountLabel,
-                reputationLabel
+                reputationLabel,
+                daysLabel,
+                labeledBar("SOSPETTO", suspicionBar)
         );
 
         return top;
@@ -127,10 +137,6 @@ public class GameView {
         mapButton.setMaxWidth(Double.MAX_VALUE);
 
         mapButton.setOnAction(event -> {
-            if (messageTimeline != null) {
-                messageTimeline.stop();
-            }
-
             MapView mapView = new MapView(controller, stage);
             mapView.show();
         });
@@ -145,9 +151,8 @@ public class GameView {
                 controller.moveToLocation(location.getId());
                 updateView();
 
-                showMessage(
-                        "Alex ha raggiunto: " + location.getName()
-                );
+                addMessage("Alex ha raggiunto: " + location.getName());
+                checkGameState();
             });
 
             roomsBox.getChildren().add(button);
@@ -276,7 +281,12 @@ public class GameView {
         reportButton.setMaxWidth(Double.MAX_VALUE);
         reportButton.setOnAction(event -> writeReport());
 
+        experienceBar = createBar(220, 12);
+        reputationBar = createBar(220, 12);
+
         panel.getChildren().addAll(
+                labeledBar("ESPERIENZA", experienceBar),
+                labeledBar("REPUTAZIONE", reputationBar),
                 notebookTitle,
                 notebookHint,
                 cluesList,
@@ -291,43 +301,94 @@ public class GameView {
         return panel;
     }
 
-    private HBox buildBottomPanel() {
-        HBox bottom = new HBox();
-        bottom.setAlignment(Pos.CENTER_LEFT);
+    private VBox buildBottomPanel() {
+        VBox bottom = new VBox(8);
         bottom.setPadding(new Insets(12));
-
         bottom.getStyleClass().add("top-panel");
 
-        messageLabel = new Label(
-                "Missione avviata. Esplora la stazione spaziale!"
+        Label title = new Label("REGISTRO MISSIONE");
+        title.getStyleClass().add("section-title");
+
+        // Un pannello semplice evita lo sfondo bianco interno di ScrollPane.
+        messageLog = new VBox(5);
+        messageLog.setPadding(new Insets(10));
+        messageLog.setMinHeight(100);
+        messageLog.setPrefHeight(115);
+        messageLog.setStyle(
+                "-fx-background-color: #0b1220;" +
+                        "-fx-border-color: #38bdf8;" +
+                        "-fx-border-width: 1px;"
         );
 
-        bottom.getChildren().add(messageLabel);
-
+        bottom.getChildren().addAll(title, messageLog);
         return bottom;
     }
 
-    private void showMessage(String message) {
-        if (messageTimeline != null) {
-            messageTimeline.stop();
-        }
-
-        messageLabel.setText("> " + message);
-        messageLabel.setStyle("-fx-text-fill: #7dd3fc;");
-
-        messageTimeline = new Timeline(
-                new KeyFrame(Duration.seconds(4), event -> {
-                    messageLabel.setText(
-                            "> In attesa della prossima azione..."
-                    );
-
-                    messageLabel.setStyle(
-                            "-fx-text-fill: #e5edf8;"
-                    );
-                })
+    private void addMessage(String message) {
+        Label entry = new Label("> " + message);
+        entry.setWrapText(true);
+        entry.setMaxWidth(Double.MAX_VALUE);
+        entry.setStyle(
+                "-fx-text-fill: #7dd3fc;" +
+                        "-fx-font-size: 12px;" +
+                        "-fx-background-color: transparent;"
         );
+        messageLog.getChildren().add(0, entry);
+        while (messageLog.getChildren().size() > 5) {
+            messageLog.getChildren().remove(messageLog.getChildren().size() - 1);
+        }
+    }
 
-        messageTimeline.play();
+    private Canvas createBar(double width, double height) {
+        return new Canvas(width, height);
+    }
+
+    private VBox labeledBar(String title, Canvas bar) {
+        Label label = new Label(title);
+        VBox box = new VBox(4, label, bar);
+        return box;
+    }
+
+    private void drawBar(Canvas bar, double value, double max, Color color) {
+        GraphicsContext gc = bar.getGraphicsContext2D();
+        double width = bar.getWidth();
+        double height = bar.getHeight();
+        double ratio = max <= 0 ? 0 : Math.max(0, Math.min(1, value / max));
+        gc.setFill(Color.web("#142035"));
+        gc.fillRect(0, 0, width, height);
+        gc.setFill(color);
+        gc.fillRect(0, 0, width * ratio, height);
+        gc.setStroke(Color.web("#7dd3fc"));
+        gc.strokeRect(0.5, 0.5, width - 1, height - 1);
+    }
+
+    private void checkGameState() {
+        if (gameFinished) return;
+        if (controller.isGameOver()) {
+            gameFinished = true;
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("MISSIONE FALLITA");
+            alert.setHeaderText("SpaceMystery - Missione fallita");
+            alert.setContentText(controller.getGameOverReason()
+                    + "\nIndizi raccolti: " + controller.getAstronaut().getNotebook().size()
+                    + "\nReputazione: " + controller.getAstronaut().getReputation()
+                    + "\nLivello: " + controller.getPlayerStats().getLevel());
+            alert.showAndWait();
+        } else if (controller.isVictory()) {
+            gameFinished = true;
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("MISSIONE COMPIUTA!");
+            alert.setHeaderText("SpaceMystery - Missione completata");
+            alert.setContentText("Alex ha risolto il mistero della stazione spaziale!"
+                    + "\nReputazione: " + controller.getAstronaut().getReputation()
+                    + "\nLivello: " + controller.getPlayerStats().getLevel()
+                    + "\nIndizi raccolti: " + controller.getAstronaut().getNotebook().size());
+            alert.showAndWait();
+        } else if (controller.getSuspicionLevel() >= 70) {
+            addMessage("ATTENZIONE: livello di sospetto molto alto!");
+        } else if (controller.getDaysRemaining() <= 3) {
+            addMessage("URGENTE: restano solo " + controller.getDaysRemaining() + " giorni!");
+        }
     }
 
     private void collectClues() {
@@ -342,19 +403,21 @@ public class GameView {
             }
         }
 
+        controller.increaseSuspicion(10);
         updateView();
 
         if (collected > 0) {
-            showMessage(
+            addMessage(
                     "Hai raccolto " + collected
                             + " nuovi indizi in "
                             + current.getName() + "!"
             );
         } else {
-            showMessage(
+            addMessage(
                     "Nessun nuovo indizio disponibile in questa stanza."
             );
         }
+        checkGameState();
     }
 
     /**
@@ -363,7 +426,7 @@ public class GameView {
     private void showNPCDialog() {
         java.util.List<NPC> crew = new java.util.ArrayList<>(controller.getAllNPCs());
         if (crew.isEmpty()) {
-            showMessage("Nessun membro dell'equipaggio disponibile.");
+            addMessage("Nessun membro dell'equipaggio disponibile.");
             return;
         }
 
@@ -430,10 +493,12 @@ public class GameView {
                             (response == null || response.isBlank()
                                     ? "Nessuna risposta disponibile."
                                     : response));
+                    controller.decreaseSuspicion(5);
                     updateView();
+                    checkGameState();
                     hint.setText("Carisma di Alex: "
                             + controller.getPlayerStats().getCharisma());
-                    showMessage("Dialogo completato con " + npc.getName() + ".");
+                    addMessage("Dialogo completato con " + npc.getName() + ".");
                 } catch (IllegalArgumentException | IllegalStateException exception) {
                     responseLabel.setText(exception.getMessage());
                 }
@@ -459,7 +524,7 @@ public class GameView {
                             + "prima di creare un rapporto."
             );
 
-            showMessage(
+            addMessage(
                     "Impossibile creare un rapporto: "
                             + "nessun indizio raccolto."
             );
@@ -482,8 +547,9 @@ public class GameView {
 
                 controller.publishReport(report);
                 updateView();
+                checkGameState();
 
-                showMessage(
+                addMessage(
                         "Rapporto pubblicato! Reputazione: "
                                 + controller.getAstronaut()
                                 .getReputation()
@@ -525,6 +591,19 @@ public class GameView {
                         .getNotebook().size()
         );
 
+        daysLabel.setText("Giorni: " + controller.getDaysRemaining());
+        daysLabel.setStyle(controller.getDaysRemaining() <= 3
+                ? "-fx-text-fill: #ff5555;"
+                : controller.getDaysRemaining() <= 5
+                ? "-fx-text-fill: #ffbb55;"
+                : "");
+        drawBar(suspicionBar, controller.getSuspicionLevel(),
+                controller.getMaxSuspicion(), Color.web("#ef4444"));
+        drawBar(experienceBar, stats.getExperience(),
+                stats.getLevel() * 100, Color.web("#60a5fa"));
+        drawBar(reputationBar, controller.getAstronaut().getReputation(),
+                100, Color.web("#fbbf24"));
+
         updateQuests();
 
         cluesList.getItems().clear();
@@ -549,6 +628,11 @@ public class GameView {
                         .append(quest.isObjectiveCompleted(i) ? "✓ " : "○ ")
                         .append(quest.getObjectives().get(i));
             }
+            int total = quest.getTotalObjectivesCount();
+            int completed = quest.getCompletedObjectivesCount();
+            int filled = total == 0 ? 0 : (int) Math.round(10.0 * completed / total);
+            details.append("\n").append("█".repeat(filled))
+                    .append("░".repeat(10 - filled));
             questsList.getItems().add(details.toString());
         }
 
@@ -566,3 +650,5 @@ public class GameView {
         alert.showAndWait();
     }
 }
+
+

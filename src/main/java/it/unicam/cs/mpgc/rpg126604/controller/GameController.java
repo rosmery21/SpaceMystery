@@ -16,6 +16,10 @@ public class GameController {
     private final Map<String, NPC> npcs;
     private final Map<String, Quest> quests;
     private Location currentLocation;
+    private int suspicionLevel;
+    private int daysRemaining;
+    private static final int MAX_SUSPICION = 100;
+    private static final int MAX_DAYS = 10;
 
     public GameController(GameRepository repository) {
         if (repository == null) {
@@ -27,6 +31,8 @@ public class GameController {
         this.locations = new LinkedHashMap<>();
         this.npcs = new LinkedHashMap<>();
         this.quests = new LinkedHashMap<>();
+        this.suspicionLevel = 0;
+        this.daysRemaining = MAX_DAYS;
 
         initializeGame();
     }
@@ -109,6 +115,8 @@ public class GameController {
 
         currentLocation = location;
         astronaut.visitLocation(location);
+        increaseSuspicion(5);
+        advanceDay();
         updateLocationObjectives(location);
     }
 
@@ -133,6 +141,7 @@ public class GameController {
 
     public void publishReport(Report report) {
         astronaut.publishReport(report);
+        decreaseSuspicion(15);
         saveGame();
     }
 
@@ -165,12 +174,15 @@ public class GameController {
             throw new IllegalArgumentException("Scelta di dialogo non valida");
         }
         if (!canSelectDialogueChoice(choice)) {
+            increaseSuspicion(5);
             throw new IllegalStateException(
-                    "Carisma insufficiente per questa risposta"
+                    "Carisma insufficiente per questa risposta. "
+                            + "Il membro dell'equipaggio ti guarda con sospetto."
             );
         }
 
         astronaut.getStats().addExperience(choice.getExperienceReward());
+        decreaseSuspicion(5);
 
         if (choice.hasClue()) {
             Clue clue = findClueById(choice.getClueId());
@@ -251,6 +263,39 @@ public class GameController {
                 astronaut.completeQuest(quest);
             }
         }
+    }
+
+    public int getSuspicionLevel() { return suspicionLevel; }
+    public int getDaysRemaining() { return daysRemaining; }
+    public int getMaxSuspicion() { return MAX_SUSPICION; }
+    public int getMaxDays() { return MAX_DAYS; }
+
+    public void increaseSuspicion(int amount) {
+        this.suspicionLevel = Math.min(suspicionLevel + amount, MAX_SUSPICION);
+    }
+
+    public void decreaseSuspicion(int amount) {
+        this.suspicionLevel = Math.max(suspicionLevel - amount, 0);
+    }
+
+    public void advanceDay() {
+        if (daysRemaining > 0) daysRemaining--;
+    }
+
+    public boolean isGameOver() {
+        return suspicionLevel >= MAX_SUSPICION || daysRemaining <= 0;
+    }
+
+    public boolean isVictory() {
+        return astronaut.getReputation() >= 100;
+    }
+
+    public String getGameOverReason() {
+        if (suspicionLevel >= MAX_SUSPICION)
+            return "Il livello di sospetto è troppo alto: l'equipaggio ti ha scoperto!";
+        if (daysRemaining <= 0)
+            return "Il tempo per completare la missione è scaduto!";
+        return "";
     }
 
     public void saveGame() {
