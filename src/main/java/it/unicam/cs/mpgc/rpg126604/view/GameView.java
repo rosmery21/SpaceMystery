@@ -27,6 +27,10 @@ public class GameView {
     private Label levelLabel;
     private Label experienceLabel;
     private Label daysLabel;
+    private Label objectiveLabel;
+    private Button collectButton;
+    private Label experienceValueLabel;
+    private Label reputationValueLabel;
     private Canvas suspicionBar;
     private Canvas experienceBar;
     private Canvas reputationBar;
@@ -172,7 +176,9 @@ public class GameView {
 
         VBox.setVgrow(descriptionArea, Priority.ALWAYS);
 
-        Button collectButton = new Button("RACCOGLI INDIZI");
+        collectButton = new Button("RACCOGLI INDIZI");
+        collectButton.setManaged(false);
+        collectButton.setVisible(false);
         collectButton.setMaxWidth(Double.MAX_VALUE);
         collectButton.setOnAction(event -> collectClues());
 
@@ -283,10 +289,30 @@ public class GameView {
 
         experienceBar = createBar(220, 12);
         reputationBar = createBar(220, 12);
+        experienceValueLabel = new Label("0 / 100 XP");
+        reputationValueLabel = new Label("0 / 100");
+
+        Label objectiveTitle = new Label("OBIETTIVO ATTUALE");
+        objectiveTitle.getStyleClass().add("section-title");
+        objectiveLabel = new Label();
+        objectiveLabel.setWrapText(true);
+        objectiveLabel.setMaxWidth(Double.MAX_VALUE);
+        objectiveLabel.setStyle(
+                "-fx-text-fill: #bae6fd;" +
+                        "-fx-background-color: #0b1220;" +
+                        "-fx-border-color: #38bdf8;" +
+                        "-fx-border-width: 2px;" +
+                        "-fx-padding: 12px;" +
+                        "-fx-font-size: 13px;"
+        );
 
         panel.getChildren().addAll(
+                objectiveTitle,
+                objectiveLabel,
                 labeledBar("ESPERIENZA", experienceBar),
+                experienceValueLabel,
                 labeledBar("REPUTAZIONE", reputationBar),
+                reputationValueLabel,
                 notebookTitle,
                 notebookHint,
                 cluesList,
@@ -403,7 +429,9 @@ public class GameView {
             }
         }
 
-        controller.increaseSuspicion(10);
+        if (collected > 0) {
+            controller.increaseSuspicion(10);
+        }
         updateView();
 
         if (collected > 0) {
@@ -603,6 +631,18 @@ public class GameView {
                 stats.getLevel() * 100, Color.web("#60a5fa"));
         drawBar(reputationBar, controller.getAstronaut().getReputation(),
                 100, Color.web("#fbbf24"));
+        experienceValueLabel.setText(stats.getExperience() + " / "
+                + (stats.getLevel() * 100) + " XP");
+        reputationValueLabel.setText(controller.getAstronaut().getReputation() + " / 100");
+        objectiveLabel.setText(controller.getCurrentObjective());
+
+        boolean hasClues = current.getClues().stream()
+                .anyMatch(clue -> !clue.isDiscovered());
+        collectButton.setVisible(hasClues);
+        collectButton.setManaged(hasClues);
+        if (hasClues) {
+            collectButton.setText("RACCOGLI INDIZI - " + current.getName().toUpperCase());
+        }
 
         updateQuests();
 
@@ -650,5 +690,3 @@ public class GameView {
         alert.showAndWait();
     }
 }
-
-

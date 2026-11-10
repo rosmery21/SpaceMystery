@@ -298,6 +298,38 @@ public class GameController {
         return "";
     }
 
+    /**
+     * Suggerisce il prossimo passo della missione senza modificare lo stato di gioco.
+     */
+    public String getCurrentObjective() {
+        int clues = (int) locations.values().stream()
+                .flatMap(location -> location.getClues().stream())
+                .filter(Clue::isDiscovered)
+                .count();
+
+        int contacts = (int) npcs.values().stream()
+                .filter(npc -> npc.getCluesProvided().stream()
+                        .anyMatch(Clue::isDiscovered))
+                .count();
+
+        int reputation = astronaut.getReputation();
+
+        if (clues == 0) {
+            return "OBIETTIVO:\nEsplora la stazione e cerca indizi!";
+        } else if (clues < 3) {
+            return "OBIETTIVO:\nRaccogli altri indizi! (" + clues + "/3)";
+        } else if (contacts < 2) {
+            return "OBIETTIVO:\nParla con l'equipaggio! (" + contacts + "/2)";
+        } else if (clues < 5) {
+            return "OBIETTIVO:\nContinua a investigare! (" + clues + "/5 indizi)";
+        } else if (reputation == 0) {
+            return "OBIETTIVO:\nPrepara e pubblica il primo rapporto!";
+        } else if (reputation < 100) {
+            return "OBIETTIVO:\nPubblica altri rapporti! (" + reputation + "/100 reputazione)";
+        }
+        return "MISSIONE COMPLETATA!";
+    }
+
     public void saveGame() {
         GameState state = new GameState(astronaut, currentLocation.getId());
         repository.saveGame(state);
@@ -307,3 +339,4 @@ public class GameController {
         return repository.hasSavedGame();
     }
 }
+
