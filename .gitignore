@@ -39,3 +39,4 @@ bin/
 .DS_Store
 
 savegame.json
+savegame.backup.json

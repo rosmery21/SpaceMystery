@@ -1,8 +1,10 @@
-
 package it.unicam.cs.mpgc.rpg126604.repository;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import it.unicam.cs.mpgc.rpg126604.interfaces.GameRepository;
 import it.unicam.cs.mpgc.rpg126604.model.GameState;
 
@@ -13,10 +15,13 @@ import java.nio.file.*;
 public class JsonGameRepository implements GameRepository {
 
     private static final String SAVE_FILE = "savegame.json";
+
     private final Gson gson;
 
     public JsonGameRepository() {
-        this.gson = new GsonBuilder().setPrettyPrinting().create();
+        this.gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
     }
 
     @Override
@@ -24,16 +29,41 @@ public class JsonGameRepository implements GameRepository {
         try (Writer writer = new FileWriter(SAVE_FILE)) {
             gson.toJson(state, writer);
         } catch (IOException e) {
-            throw new RuntimeException("Errore nel salvataggio del gioco", e);
+            throw new RuntimeException(
+                    "Errore nel salvataggio del gioco", e
+            );
         }
     }
 
     @Override
     public GameState loadGame() {
         try (Reader reader = new FileReader(SAVE_FILE)) {
-            return gson.fromJson(reader, GameState.class);
+
+            JsonObject json = JsonParser
+                    .parseReader(reader)
+                    .getAsJsonObject();
+
+            // Compatibilità con i salvataggi precedenti al nuovo
+            // sistema di ripristino della missione.
+            if (!json.has("suspicionLevel")) {
+                json.addProperty("suspicionLevel", 0);
+            }
+
+            if (!json.has("daysRemaining")) {
+                json.addProperty("daysRemaining", 10);
+            }
+
+            if (!json.has("contactedNPCs")) {
+                json.add("contactedNPCs",
+                        new com.google.gson.JsonArray());
+            }
+
+            return gson.fromJson(json, GameState.class);
+
         } catch (IOException e) {
-            throw new RuntimeException("Errore nel caricamento del gioco", e);
+            throw new RuntimeException(
+                    "Errore nel caricamento del gioco", e
+            );
         }
     }
 

@@ -8,6 +8,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -22,12 +23,14 @@ public class WelcomeView {
 
     private static final int WIDTH = 1280;
     private static final int HEIGHT = 800;
+
     private static final String CYAN = "#7dd3fc";
     private static final String BLUE = "#2563eb";
     private static final String DARK = "#050b1b";
 
     private final GameController controller;
     private final Stage stage;
+
     private int currentStep = 0;
     private Label typewriterLabel;
     private Timeline typewriterTimeline;
@@ -41,27 +44,48 @@ public class WelcomeView {
     private final TutorialStep[] steps = {
             new TutorialStep(
                     "SPACE MYSTERY",
-                    "Benvenuto a bordo.\n\nSei Alex, un astronauta in missione su una stazione spaziale.\n\nQualcosa di misterioso sta accadendo..."
+                    "Benvenuto a bordo.\n\n" +
+                            "Sei Alex, un astronauta in missione su una stazione spaziale.\n\n" +
+                            "Qualcosa di misterioso sta accadendo..."
             ),
             new TutorialStep(
                     "LA STAZIONE SPAZIALE",
-                    "La stazione nasconde segreti.\n\nLa Sala Comandi, il Laboratorio Scientifico e la Sala Motori potrebbero contenere indizi importanti.\n\nEsplora ogni ambiente con attenzione."
+                    "La stazione nasconde segreti.\n\n" +
+                            "La Sala Comandi, il Laboratorio Scientifico e " +
+                            "la Sala Motori potrebbero contenere indizi importanti.\n\n" +
+                            "Esplora ogni ambiente con attenzione."
             ),
             new TutorialStep(
                     "LA TUA MISSIONE",
-                    "Devi indagare sugli strani eventi che si verificano a bordo.\n\nRaccogli gli indizi, ricostruisci gli avvenimenti e prepara i tuoi rapporti investigativi."
+                    "Devi indagare sugli strani eventi che si verificano a bordo.\n\n" +
+                            "Raccogli gli indizi, ricostruisci gli avvenimenti " +
+                            "e prepara i tuoi rapporti investigativi."
             ),
             new TutorialStep(
                     "COME GIOCARE",
-                    "1. ESPLORA\nSpostati tra le stanze della stazione.\n\n2. INDAGA\nRaccogli gli indizi disponibili.\n\n3. CONSULTA IL TACCUINO\nRileggi le informazioni raccolte.\n\n4. CREA RAPPORTI\nPubblica le scoperte per aumentare la reputazione."
+                    "1. ESPLORA\n" +
+                            "Spostati tra le stanze della stazione.\n\n" +
+                            "2. INDAGA\n" +
+                            "Raccogli gli indizi disponibili.\n\n" +
+                            "3. CONSULTA IL TACCUINO\n" +
+                            "Rileggi le informazioni raccolte.\n\n" +
+                            "4. CREA RAPPORTI\n" +
+                            "Pubblica le scoperte per aumentare la reputazione."
             ),
             new TutorialStep(
                     "CONSIGLI",
-                    "Usa il pulsante MAPPA DELLA STAZIONE per visualizzare gli ambienti.\n\nNella mappa puoi utilizzare WASD oppure le frecce direzionali.\n\nPremi INVIO per raggiungere la stanza selezionata.\n\nOgni indizio può essere importante!"
+                    "Usa il pulsante MAPPA DELLA STAZIONE " +
+                            "per visualizzare gli ambienti.\n\n" +
+                            "Nella mappa puoi utilizzare WASD oppure " +
+                            "le frecce direzionali.\n\n" +
+                            "Premi INVIO per raggiungere la stanza selezionata.\n\n" +
+                            "Ogni indizio può essere importante!"
             ),
             new TutorialStep(
                     "SEI PRONTO?",
-                    "La verità è nascosta tra i corridoi della stazione.\n\nSolo un'indagine accurata potrà svelare il mistero.\n\nBuona fortuna, Alex!"
+                    "La verità è nascosta tra i corridoi della stazione.\n\n" +
+                            "Solo un'indagine accurata potrà svelare il mistero.\n\n" +
+                            "Buona fortuna, Alex!"
             )
     };
 
@@ -75,36 +99,189 @@ public class WelcomeView {
     }
 
     public void show() {
-        showStep(currentStep);
+        if (controller.hasSavedGame()) {
+            showContinueOrNewChoice();
+        } else {
+            showStep(0);
+        }
+    }
+
+    // Permette di continuare una missione salvata o iniziarne una nuova.
+    private void showContinueOrNewChoice() {
+        stopTypewriterEffect();
+
+        VBox panel = new VBox(24);
+        panel.setAlignment(Pos.CENTER);
+        panel.setPadding(new Insets(45));
+        panel.setMaxWidth(700);
+
+        panel.setStyle(
+                "-fx-background-color: rgba(4, 12, 31, 0.93);" +
+                        "-fx-border-color: " + CYAN + ";" +
+                        "-fx-border-width: 2px;" +
+                        "-fx-background-radius: 12px;" +
+                        "-fx-border-radius: 12px;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(30,144,255,0.40), 24, 0.3, 0, 0);"
+        );
+
+        Label gameTitle = new Label("✦ SPACE MYSTERY ✦");
+        gameTitle.setStyle(
+                "-fx-font-size: 30px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: " + CYAN + ";"
+        );
+
+        Label titleLabel = new Label("BENTORNATO A BORDO");
+        titleLabel.setStyle(
+                "-fx-font-size: 23px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: #e0f2fe;"
+        );
+
+        Label divider = new Label("━━━━━━━━━━ ✦ ━━━━━━━━━━");
+        divider.setStyle("-fx-text-fill: " + BLUE + ";");
+
+        Label description = new Label(
+                "È stata trovata una missione salvata.\n\n" +
+                        "Vuoi riprendere l'indagine di Alex oppure " +
+                        "iniziare una nuova missione?"
+        );
+
+        description.setWrapText(true);
+        description.setAlignment(Pos.CENTER);
+        description.setTextAlignment(
+                javafx.scene.text.TextAlignment.CENTER
+        );
+        description.setMaxWidth(560);
+        description.setStyle(
+                "-fx-font-size: 17px;" +
+                        "-fx-text-fill: #e5edf8;" +
+                        "-fx-line-spacing: 5px;"
+        );
+
+        Button continueButton = createButton("CONTINUA MISSIONE", true);
+        continueButton.setPrefWidth(245);
+
+        continueButton.setOnAction(event -> {
+            try {
+                if (controller.loadGame()) {
+                    new GameView(controller, stage).show();
+                } else {
+                    showLoadError(
+                            "Non è stato possibile trovare " +
+                                    "una partita salvata valida."
+                    );
+                }
+            } catch (RuntimeException exception) {
+                showLoadError(
+                        "Non è stato possibile caricare la missione.\n\n" +
+                                exception.getMessage()
+                );
+            }
+        });
+
+        Button newGameButton = createButton("NUOVA MISSIONE", false);
+        newGameButton.setPrefWidth(245);
+
+        newGameButton.setOnAction(event -> {
+            // Il controller contiene già una nuova partita
+            // inizializzata nel suo costruttore.
+            // Non cancelliamo il salvataggio esistente.
+            showStep(0);
+        });
+
+        HBox buttons = new HBox(20);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.getChildren().addAll(
+                continueButton,
+                newGameButton
+        );
+
+        Label warning = new Label(
+                "Una nuova missione sostituirà il precedente " +
+                        "salvataggio al prossimo salvataggio."
+        );
+        warning.setWrapText(true);
+        warning.setTextAlignment(
+                javafx.scene.text.TextAlignment.CENTER
+        );
+        warning.setMaxWidth(540);
+        warning.setStyle(
+                "-fx-font-size: 12px;" +
+                        "-fx-text-fill: #94a3b8;"
+        );
+
+        panel.getChildren().addAll(
+                gameTitle,
+                titleLabel,
+                divider,
+                description,
+                buttons,
+                warning
+        );
+
+        showScene(panel);
+    }
+
+    // Mostra un errore senza chiudere la schermata iniziale.
+    private void showLoadError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initOwner(stage);
+        alert.setTitle("SpaceMystery");
+        alert.setHeaderText("Errore nel caricamento");
+        alert.setContentText(message);
+
+        java.net.URL css = getClass().getResource("/css/style.css");
+
+        if (css != null) {
+            alert.getDialogPane()
+                    .getStylesheets()
+                    .add(css.toExternalForm());
+        }
+
+        alert.showAndWait();
     }
 
     private void showStep(int step) {
         currentStep = step;
 
-        if (typewriterTimeline != null) {
-            typewriterTimeline.stop();
-        }
+        stopTypewriterEffect();
 
         VBox panel = new VBox(19);
         panel.setAlignment(Pos.CENTER);
         panel.setPadding(new Insets(35, 45, 35, 45));
         panel.setMaxWidth(700);
         panel.setMaxHeight(690);
-        panel.setStyle("-fx-background-color: rgba(4, 12, 31, 0.93);" +
-                "-fx-border-color: " + CYAN + "; -fx-border-width: 2px;" +
-                "-fx-background-radius: 12px; -fx-border-radius: 12px;" +
-                "-fx-effect: dropshadow(gaussian, rgba(30,144,255,0.40), 24, 0.3, 0, 0);");
+
+        panel.setStyle(
+                "-fx-background-color: rgba(4, 12, 31, 0.93);" +
+                        "-fx-border-color: " + CYAN + ";" +
+                        "-fx-border-width: 2px;" +
+                        "-fx-background-radius: 12px;" +
+                        "-fx-border-radius: 12px;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(30,144,255,0.40), 24, 0.3, 0, 0);"
+        );
 
         Label gameTitle = new Label("✦ SPACE MYSTERY ✦");
-        gameTitle.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: " + CYAN + ";");
+        gameTitle.setStyle(
+                "-fx-font-size: 30px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: " + CYAN + ";"
+        );
 
         Label stepIndicator = new Label(
                 "MISSIONE | " + (step + 1) + " / " + steps.length
         );
-        stepIndicator.setStyle("-fx-font-size: 13px; -fx-text-fill: #94a3b8;");
+        stepIndicator.setStyle(
+                "-fx-font-size: 13px; -fx-text-fill: #94a3b8;"
+        );
 
         Label titleLabel = new Label(steps[step].title());
-        titleLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #e0f2fe;");
+        titleLabel.setStyle(
+                "-fx-font-size: 22px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: #e0f2fe;"
+        );
 
         Label dividerTop = new Label("━━━━━━━━━━ ✦ ━━━━━━━━━━");
         dividerTop.setStyle("-fx-text-fill: " + BLUE + ";");
@@ -115,32 +292,38 @@ public class WelcomeView {
         typewriterLabel = new Label("");
         typewriterLabel.setWrapText(true);
         typewriterLabel.setAlignment(Pos.CENTER);
-        typewriterLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        typewriterLabel.setTextAlignment(
+                javafx.scene.text.TextAlignment.CENTER
+        );
         typewriterLabel.setMaxWidth(590);
         typewriterLabel.setMinHeight(270);
-        typewriterLabel.setStyle("-fx-font-size: 17px; -fx-text-fill: #e5edf8; -fx-line-spacing: 5px;");
+        typewriterLabel.setStyle(
+                "-fx-font-size: 17px;" +
+                        "-fx-text-fill: #e5edf8;" +
+                        "-fx-line-spacing: 5px;"
+        );
 
         HBox buttons = new HBox(20);
         buttons.setAlignment(Pos.CENTER);
 
         if (step > 0) {
             Button back = createButton("INDIETRO", false);
-            back.setOnAction(e -> showStep(step - 1));
+            back.setOnAction(event -> showStep(step - 1));
             buttons.getChildren().add(back);
         }
 
         if (step < steps.length - 1) {
             Button next = createButton("AVANTI", false);
-            next.setOnAction(e -> showStep(step + 1));
+            next.setOnAction(event -> showStep(step + 1));
             buttons.getChildren().add(next);
         } else {
             Button start = createButton("INIZIA LA MISSIONE", true);
-            start.setOnAction(e -> {
-                if (typewriterTimeline != null) {
-                    typewriterTimeline.stop();
-                }
+
+            start.setOnAction(event -> {
+                stopTypewriterEffect();
                 new GameView(controller, stage).show();
             });
+
             buttons.getChildren().add(start);
         }
 
@@ -154,13 +337,19 @@ public class WelcomeView {
                 buttons
         );
 
+        showScene(panel);
+        startTypewriterEffect(steps[step].content());
+    }
+
+    // Riutilizza lo sfondo spaziale per tutte le schermate iniziali.
+    private void showScene(VBox panel) {
         StackPane root = new StackPane(bgCanvas, panel);
         root.setStyle("-fx-background-color: " + DARK + ";");
 
         Scene scene = new Scene(root, WIDTH, HEIGHT);
 
-        // Manteniamo il CSS esistente per coerenza con le altre schermate.
         java.net.URL css = getClass().getResource("/css/style.css");
+
         if (css != null) {
             scene.getStylesheets().add(css.toExternalForm());
         }
@@ -168,8 +357,6 @@ public class WelcomeView {
         stage.setTitle("SpaceMystery - Benvenuto");
         stage.setScene(scene);
         stage.show();
-
-        startTypewriterEffect(steps[step].content());
     }
 
     private Button createButton(String text, boolean primary) {
@@ -178,17 +365,25 @@ public class WelcomeView {
 
         String border = primary ? CYAN : "#64748b";
 
-        String normal = "-fx-background-color: #0f172a; -fx-text-fill: #e0f2fe;" +
-                "-fx-border-color: " + border + "; -fx-border-width: 2px;" +
-                "-fx-font-weight: bold; -fx-padding: 11px 18px;";
+        String normal =
+                "-fx-background-color: #0f172a;" +
+                        "-fx-text-fill: #e0f2fe;" +
+                        "-fx-border-color: " + border + ";" +
+                        "-fx-border-width: 2px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-padding: 11px 18px;";
 
-        String hover = "-fx-background-color: " + CYAN + "; -fx-text-fill: #051020;" +
-                "-fx-border-color: " + CYAN + "; -fx-border-width: 2px;" +
-                "-fx-font-weight: bold; -fx-padding: 11px 18px;";
+        String hover =
+                "-fx-background-color: " + CYAN + ";" +
+                        "-fx-text-fill: #051020;" +
+                        "-fx-border-color: " + CYAN + ";" +
+                        "-fx-border-width: 2px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-padding: 11px 18px;";
 
         button.setStyle(normal);
-        button.setOnMouseEntered(e -> button.setStyle(hover));
-        button.setOnMouseExited(e -> button.setStyle(normal));
+        button.setOnMouseEntered(event -> button.setStyle(hover));
+        button.setOnMouseExited(event -> button.setStyle(normal));
 
         return button;
     }
@@ -207,6 +402,7 @@ public class WelcomeView {
                     i % 4 == 0 ? "#7dd3fc" : "#e2e8f0",
                     0.35 + (i % 5) * 0.12
             ));
+
             gc.fillOval(x, y, radius, radius);
         }
 
@@ -318,7 +514,8 @@ public class WelcomeView {
                 new KeyFrame(Duration.millis(30), event -> {
                     if (index[0] < text.length()) {
                         typewriterLabel.setText(
-                                typewriterLabel.getText() + text.charAt(index[0])
+                                typewriterLabel.getText() +
+                                        text.charAt(index[0])
                         );
                         index[0]++;
                     }
@@ -327,5 +524,12 @@ public class WelcomeView {
 
         typewriterTimeline.setCycleCount(text.length());
         typewriterTimeline.play();
+    }
+
+    private void stopTypewriterEffect() {
+        if (typewriterTimeline != null) {
+            typewriterTimeline.stop();
+            typewriterTimeline = null;
+        }
     }
 }

@@ -121,15 +121,25 @@ public class GameController {
         increaseSuspicion(5);
         advanceDay();
         updateLocationObjectives(location);
+        saveGame();
     }
 
+    // raccoglie un indizio e salva i progressi della missione
     public void collectClue(Clue clue) {
         if (clue == null) {
             throw new IllegalArgumentException("Indizio non valido");
         }
 
+        // Evita di salvare e aggiornare nuovamente un indizio già raccolto.
+        if (astronaut.getNotebook().contains(clue)) {
+            return;
+        }
+
         astronaut.addClueToNotebook(clue);
         updateClueObjectives(clue);
+
+        // Conserva immediatamente gli indizi e gli obiettivi completati.
+        saveGame();
     }
 
     public Report createReport(String title) {
@@ -196,6 +206,7 @@ public class GameController {
 
         contactedNPCs.add(npcId);
         updateDialogueObjectives(npcId);
+        saveGame();
         return choice.getResponse();
     }
 
@@ -328,14 +339,117 @@ public class GameController {
         return "MISSIONE COMPLETATA!";
     }
 
+    // salva tutti i dati necessari a riprendere la missione
     public void saveGame() {
-        GameState state = new GameState(astronaut, currentLocation.getId());
+        GameState state = new GameState(
+                astronaut,
+                currentLocation.getId(),
+                suspicionLevel,
+                daysRemaining,
+                contactedNPCs
+        );
+
         repository.saveGame(state);
     }
 
+    // verifica se esiste una partita salvata
     public boolean hasSavedGame() {
         return repository.hasSavedGame();
     }
+
+    // carica una partita salvata e ripristina i progressi di Alex
+    public boolean loadGame() {
+        if (!repository.hasSavedGame()) {
+            return false;
+        }
+
+        GameState state = repository.loadGame();
+
+        if (state == null || state.getAstronaut() == null) {
+            return false;
+        }
+
+        Astronaut savedAstronaut = state.getAstronaut();
+
+        // Verifica che la stanza salvata esista ancora.
+        Location savedLocation = locations.get(state.getCurrentLocationId());
+
+        if (savedLocation == null) {
+            savedLocation = locations.get("sala_comandi");
+        }
+
+        if (savedLocation == null) {
+            throw new IllegalStateException(
+                    "La Sala Comandi non è presente nei dati del gioco"
+            );
+        }
+
+        // Ripristina l'astronauta con statistiche, rapporti e reputazione.
+        this.astronaut = savedAstronaut;
+        this.currentLocation = savedLocation;
+
+        // Ripristina il livello di sospetto.
+        this.suspicionLevel = state.getSuspicionLevel();
+
+        // Ripristina i giorni disponibili.
+        this.daysRemaining = state.getDaysRemaining();
+
+        // Ripristina i membri dell'equipaggio già contattati.
+        this.contactedNPCs.clear();
+        this.contactedNPCs.addAll(state.getContactedNPCs());
+
+        // Riallinea gli indizi raccolti con quelli delle stanze.
+        for (Clue savedClue : astronaut.getNotebook()) {
+            Clue originalClue = findClueById(savedClue.getId());
+
+            if (originalClue != null) {
+                originalClue.discover();
+            }
+        }
+
+        // Riallinea le stanze visitate.
+        for (Location savedVisitedLocation : astronaut.getVisitedLocations()) {
+            Location originalLocation = locations.get(
+                    savedVisitedLocation.getId()
+            );
+
+            if (originalLocation != null) {
+                originalLocation.visit();
+            }
+        }
+
+        // Riallinea lo stato delle missioni.
+        for (Quest savedQuest : astronaut.getActiveQuests()) {
+            restoreQuestProgress(savedQuest);
+        }
+
+        for (Quest savedQuest : astronaut.getCompletedQuests()) {
+            restoreQuestProgress(savedQuest);
+        }
+
+        return true;
+    }
+
+    // ripristina gli obiettivi senza assegnare nuovamente ricompense
+    private void restoreQuestProgress(Quest savedQuest) {
+        Quest originalQuest = quests.get(savedQuest.getId());
+
+        if (originalQuest == null) {
+            return;
+        }
+
+        int objectivesCount = Math.min(
+                originalQuest.getTotalObjectivesCount(),
+                savedQuest.getTotalObjectivesCount()
+        );
+
+        for (int i = 0; i < objectivesCount; i++) {
+            if (savedQuest.isObjectiveCompleted(i)) {
+                originalQuest.completeObjective(i);
+            }
+        }
+    }
+
 }
 
 
