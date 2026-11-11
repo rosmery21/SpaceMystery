@@ -27,9 +27,9 @@
       },
       {
         "text": "Mi affidi tutti i dettagli dell'indagine.",
-        "response": "D'accordo. Controlla attentamente gli strumenti del Laboratorio Scientifico.",
+        "response": "D'accordo, Alex. Ho scoperto che qualcuno ha utilizzato credenziali scientifiche riservate per alterare i risultati delle analisi.",
         "requiredCharisma": 7,
-        "clueId": null,
+        "clueId": "indizio_007",
         "experienceReward": 30
       }
     ]
@@ -61,9 +61,9 @@
       },
       {
         "text": "Comandante, mi dica tutto quello che sa.",
-        "response": "Temo che qualcuno a bordo stia nascondendo informazioni importanti.",
+        "response": "Temo che qualcuno dell'equipaggio abbia nascosto informazioni sulla modifica della rotta della stazione.",
         "requiredCharisma": 8,
-        "clueId": null,
+        "clueId": "indizio_008",
         "experienceReward": 30
       }
     ]
@@ -95,9 +95,9 @@
       },
       {
         "text": "Nova, ho bisogno di conoscere ogni dettaglio.",
-        "response": "Allora devi esaminare i registri tecnici nella Sala Motori.",
+        "response": "Alex, ho verificato i registri tecnici: qualcuno a bordo ha modificato intenzionalmente i parametri di sicurezza dei motori.",
         "requiredCharisma": 7,
-        "clueId": null,
+        "clueId": "indizio_009",
         "experienceReward": 30
       }
     ]

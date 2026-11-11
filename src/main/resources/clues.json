@@ -35,5 +35,23 @@
     "description": "Un dispositivo elettronico sconosciuto è nascosto dietro uno dei generatori della stazione.",
     "locationId": "sala_motori",
     "discovered": false
+  },
+  {
+    "id": "indizio_007",
+    "description": "La Dott.ssa Vega rivela che qualcuno ha utilizzato credenziali scientifiche riservate per alterare i risultati delle analisi.",
+    "locationId": null,
+    "discovered": false
+  },
+  {
+    "id": "indizio_008",
+    "description": "Il Comandante Orion confida ad Alex che qualcuno dell'equipaggio potrebbe aver nascosto informazioni sulla modifica della rotta.",
+    "locationId": null,
+    "discovered": false
+  },
+  {
+    "id": "indizio_009",
+    "description": "L'Ingegnere Nova rivela che i parametri di sicurezza dei motori sono stati modificati intenzionalmente da qualcuno a bordo.",
+    "locationId": null,
+    "discovered": false
   }
 ]
