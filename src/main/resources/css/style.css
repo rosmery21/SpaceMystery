@@ -92,7 +92,7 @@
     -fx-background-color: transparent;
 }
 
-/* Separatore e barre di scorrimento: aggiunti come nel commit di Silvio */
+/* Separatore e barre di scorrimento */
 .separator {
     -fx-opacity: 0.5;
 }
@@ -113,4 +113,122 @@
 
 .scroll-bar .thumb:hover {
     -fx-background-color: #4c91c5;
+}
+
+/* =========================================================
+   DIALOGHI JAVAFX - COMMIT 4467b2a
+   ========================================================= */
+
+/* Sfondo principale dei dialoghi */
+.dialog-pane {
+    -fx-background-color: #15243a;
+    -fx-border-color: #38bdf8;
+    -fx-border-width: 2px;
+    -fx-padding: 10px;
+}
+
+/* Intestazione dei dialoghi */
+.dialog-pane .header-panel {
+    -fx-background-color: #19345b;
+    -fx-padding: 15px;
+}
+
+/* Titolo e testo dell'intestazione */
+.dialog-pane .header-panel .label {
+    -fx-text-fill: #7dd3fc;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* Testi e risposte all'interno dei dialoghi */
+.dialog-pane .label {
+    -fx-text-fill: #e5edf8;
+}
+
+/* Area che contiene i pulsanti del dialogo */
+.dialog-pane .button-bar {
+    -fx-background-color: #15243a;
+}
+
+/* Pulsanti di conferma, chiusura e scelta */
+.dialog-pane .button {
+    -fx-background-color: #244360;
+    -fx-text-fill: #e5f5ff;
+    -fx-border-color: #4c91c5;
+    -fx-border-width: 1px;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.dialog-pane .button:hover {
+    -fx-background-color: #4c91c5;
+    -fx-text-fill: #071321;
+}
+
+.dialog-pane .button:disabled {
+    -fx-opacity: 0.55;
+}
+
+/* Campo per scrivere il titolo dei rapporti */
+.dialog-pane .text-field {
+    -fx-background-color: #0b1220;
+    -fx-text-fill: #e5edf8;
+    -fx-prompt-text-fill: #94a3b8;
+    -fx-border-color: #38bdf8;
+    -fx-border-width: 1px;
+}
+
+/* Menu per selezionare Vega, Orion o Nova */
+.dialog-pane .combo-box {
+    -fx-background-color: #244360;
+    -fx-border-color: #4c91c5;
+}
+
+.dialog-pane .combo-box .list-cell {
+    -fx-background-color: #244360;
+    -fx-text-fill: #e5edf8;
+}
+
+/* Elenco aperto del menu di scelta */
+.combo-box-popup .list-view {
+    -fx-background-color: #15243a;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: #223b58;
+    -fx-text-fill: #e5edf8;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #2864a0;
+    -fx-text-fill: white;
+}
+
+/* Area scorrevole delle conversazioni con l'equipaggio */
+.dialog-pane .scroll-pane {
+    -fx-background-color: #15243a;
+    -fx-border-color: #35658a;
+    -fx-border-width: 1px;
+}
+
+.dialog-pane .scroll-pane .viewport {
+    -fx-background-color: #15243a;
+}
+
+.dialog-pane .scroll-pane .content {
+    -fx-background-color: #15243a;
+}
+
+/* Testo delle risposte e delle domande dell'equipaggio */
+.dialog-pane .scroll-pane .label {
+    -fx-text-fill: #e5edf8;
+}
+
+/* Testo dei pulsanti di dialogo */
+.dialog-pane .scroll-pane .button {
+    -fx-text-fill: #e5f5ff;
+}
+
+.dialog-pane .scroll-pane .button:hover {
+    -fx-text-fill: #071321;
 }

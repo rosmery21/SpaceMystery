@@ -13,11 +13,16 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-// costruisce e aggiorna l’interfaccia principale del gioco
+import java.net.URL;
+
+// costruisce e aggiorna l'interfaccia principale del gioco
 public class GameView {
 
     private final GameController controller;
     private final Stage stage;
+
+    // percorso del tema grafico usato anche nelle finestre di dialogo
+    private final String styleSheetPath;
 
     private Label locationLabel;
     private TextArea descriptionArea;
@@ -41,6 +46,10 @@ public class GameView {
     public GameView(GameController controller, Stage stage) {
         this.controller = controller;
         this.stage = stage;
+
+        // carica una sola volta il CSS spaziale di SpaceMystery
+        URL cssUrl = getClass().getResource("/css/style.css");
+        this.styleSheetPath = cssUrl != null ? cssUrl.toExternalForm() : null;
     }
 
     public void show() {
@@ -53,11 +62,10 @@ public class GameView {
 
         Scene scene = new Scene(root, 1100, 750);
 
-        String css = getClass()
-                .getResource("/css/style.css")
-                .toExternalForm();
-
-        scene.getStylesheets().add(css);
+        // applica il tema alla finestra principale
+        if (styleSheetPath != null) {
+            scene.getStylesheets().add(styleSheetPath);
+        }
 
         stage.setTitle("SpaceMystery - Gioco di Ruolo");
         stage.setScene(scene);
@@ -252,18 +260,23 @@ public class GameView {
         questsList = new ListView<>();
         questsList.setPrefHeight(175);
         questsList.setMinHeight(110);
+
         questsList.setCellFactory(listView -> new ListCell<>() {
+
             private final Label questLabel = new Label();
+
             {
                 questLabel.setWrapText(true);
                 questLabel.prefWidthProperty().bind(
                         listView.widthProperty().subtract(45)
                 );
             }
+
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(null);
+
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
@@ -290,11 +303,13 @@ public class GameView {
 
         experienceBar = createBar(220, 12);
         reputationBar = createBar(220, 12);
+
         experienceValueLabel = new Label("0 / 100 XP");
         reputationValueLabel = new Label("0 / 100");
 
         Label objectiveTitle = new Label("OBIETTIVO ATTUALE");
         objectiveTitle.getStyleClass().add("section-title");
+
         objectiveLabel = new Label();
         objectiveLabel.setWrapText(true);
         objectiveLabel.setMaxWidth(Double.MAX_VALUE);
@@ -336,7 +351,7 @@ public class GameView {
         Label title = new Label("REGISTRO MISSIONE");
         title.getStyleClass().add("section-title");
 
-        // Un pannello semplice evita lo sfondo bianco interno di ScrollPane.
+        // evita lo sfondo bianco interno di uno ScrollPane
         messageLog = new VBox(5);
         messageLog.setPadding(new Insets(10));
         messageLog.setMinHeight(100);
@@ -360,9 +375,13 @@ public class GameView {
                         "-fx-font-size: 12px;" +
                         "-fx-background-color: transparent;"
         );
+
         messageLog.getChildren().add(0, entry);
+
         while (messageLog.getChildren().size() > 5) {
-            messageLog.getChildren().remove(messageLog.getChildren().size() - 1);
+            messageLog.getChildren().remove(
+                    messageLog.getChildren().size() - 1
+            );
         }
     }
 
@@ -372,49 +391,81 @@ public class GameView {
 
     private VBox labeledBar(String title, Canvas bar) {
         Label label = new Label(title);
-        VBox box = new VBox(4, label, bar);
-        return box;
+        return new VBox(4, label, bar);
     }
 
     private void drawBar(Canvas bar, double value, double max, Color color) {
         GraphicsContext gc = bar.getGraphicsContext2D();
+
         double width = bar.getWidth();
         double height = bar.getHeight();
-        double ratio = max <= 0 ? 0 : Math.max(0, Math.min(1, value / max));
+
+        double ratio = max <= 0
+                ? 0
+                : Math.max(0, Math.min(1, value / max));
+
         gc.setFill(Color.web("#142035"));
         gc.fillRect(0, 0, width, height);
+
         gc.setFill(color);
         gc.fillRect(0, 0, width * ratio, height);
+
         gc.setStroke(Color.web("#7dd3fc"));
         gc.strokeRect(0.5, 0.5, width - 1, height - 1);
     }
 
     private void checkGameState() {
-        if (gameFinished) return;
+        if (gameFinished) {
+            return;
+        }
+
         if (controller.isGameOver()) {
             gameFinished = true;
+
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("MISSIONE FALLITA");
             alert.setHeaderText("SpaceMystery - Missione fallita");
-            alert.setContentText(controller.getGameOverReason()
-                    + "\nIndizi raccolti: " + controller.getAstronaut().getNotebook().size()
-                    + "\nReputazione: " + controller.getAstronaut().getReputation()
-                    + "\nLivello: " + controller.getPlayerStats().getLevel());
+            alert.setContentText(
+                    controller.getGameOverReason()
+                            + "\nIndizi raccolti: "
+                            + controller.getAstronaut().getNotebook().size()
+                            + "\nReputazione: "
+                            + controller.getAstronaut().getReputation()
+                            + "\nLivello: "
+                            + controller.getPlayerStats().getLevel()
+            );
+
+            applyStylesheet(alert.getDialogPane());
             alert.showAndWait();
+
         } else if (controller.isVictory()) {
             gameFinished = true;
+
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("MISSIONE COMPIUTA!");
             alert.setHeaderText("SpaceMystery - Missione completata");
-            alert.setContentText("Alex ha risolto il mistero della stazione spaziale!"
-                    + "\nReputazione: " + controller.getAstronaut().getReputation()
-                    + "\nLivello: " + controller.getPlayerStats().getLevel()
-                    + "\nIndizi raccolti: " + controller.getAstronaut().getNotebook().size());
+            alert.setContentText(
+                    "Alex ha risolto il mistero della stazione spaziale!"
+                            + "\nReputazione: "
+                            + controller.getAstronaut().getReputation()
+                            + "\nLivello: "
+                            + controller.getPlayerStats().getLevel()
+                            + "\nIndizi raccolti: "
+                            + controller.getAstronaut().getNotebook().size()
+            );
+
+            applyStylesheet(alert.getDialogPane());
             alert.showAndWait();
+
         } else if (controller.getSuspicionLevel() >= 70) {
             addMessage("ATTENZIONE: livello di sospetto molto alto!");
+
         } else if (controller.getDaysRemaining() <= 3) {
-            addMessage("URGENTE: restano solo " + controller.getDaysRemaining() + " giorni!");
+            addMessage(
+                    "URGENTE: restano solo "
+                            + controller.getDaysRemaining()
+                            + " giorni!"
+            );
         }
     }
 
@@ -433,6 +484,7 @@ public class GameView {
         if (collected > 0) {
             controller.increaseSuspicion(10);
         }
+
         updateView();
 
         if (collected > 0) {
@@ -446,6 +498,7 @@ public class GameView {
                     "Nessun nuovo indizio disponibile in questa stanza."
             );
         }
+
         checkGameState();
     }
 
@@ -453,7 +506,9 @@ public class GameView {
      * Permette di scegliere un membro dell'equipaggio con cui parlare.
      */
     private void showNPCDialog() {
-        java.util.List<NPC> crew = new java.util.ArrayList<>(controller.getAllNPCs());
+        java.util.List<NPC> crew =
+                new java.util.ArrayList<>(controller.getAllNPCs());
+
         if (crew.isEmpty()) {
             addMessage("Nessun membro dell'equipaggio disponibile.");
             return;
@@ -463,9 +518,13 @@ public class GameView {
                 crew.get(0).getName(),
                 crew.stream().map(NPC::getName).toList()
         );
+
         dialog.setTitle("Equipaggio della stazione");
         dialog.setHeaderText("Con chi vuoi parlare?");
         dialog.setContentText("Membro dell'equipaggio:");
+
+        // applica il CSS anche alla scelta dell'equipaggio
+        applyStylesheet(dialog.getDialogPane());
 
         dialog.showAndWait().ifPresent(selectedName -> {
             for (NPC npc : crew) {
@@ -482,6 +541,7 @@ public class GameView {
      */
     private void showDialogueChoices(NPC npc) {
         Dialog<Void> dialog = new Dialog<>();
+
         dialog.setTitle("Dialogo con " + npc.getName());
         dialog.setHeaderText(npc.getName() + " — " + npc.getRole());
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
@@ -489,49 +549,80 @@ public class GameView {
         VBox content = new VBox(12);
         content.setPadding(new Insets(10));
 
-        Label hint = new Label("Carisma di Alex: "
-                + controller.getPlayerStats().getCharisma());
+        Label hint = new Label(
+                "Carisma di Alex: "
+                        + controller.getPlayerStats().getCharisma()
+        );
         content.getChildren().add(hint);
 
-        Label responseLabel = new Label("Seleziona una domanda per leggere la risposta.");
+        Label responseLabel = new Label(
+                "Seleziona una domanda per leggere la risposta."
+        );
         responseLabel.setWrapText(true);
         responseLabel.setMaxWidth(Double.MAX_VALUE);
         responseLabel.setMinHeight(65);
 
-        java.util.List<DialogueChoice> choices = controller.getDialogueChoices(npc.getId());
+        java.util.List<DialogueChoice> choices =
+                controller.getDialogueChoices(npc.getId());
+
         if (choices.isEmpty()) {
-            Label noChoices = new Label("Nessuna scelta di dialogo disponibile.");
+            Label noChoices = new Label(
+                    "Nessuna scelta di dialogo disponibile."
+            );
             noChoices.setWrapText(true);
             content.getChildren().add(noChoices);
         }
 
         for (DialogueChoice choice : choices) {
-            boolean allowed = controller.canSelectDialogueChoice(choice);
+            boolean allowed =
+                    controller.canSelectDialogueChoice(choice);
+
             String label = choice.getText()
                     + " (CAR " + choice.getRequiredCharisma() + ")"
-                    + (allowed ? "" : " — Carisma insufficiente");
+                    + (allowed
+                    ? ""
+                    : " — Carisma insufficiente");
 
             Button option = new Button(label);
             option.setMaxWidth(Double.MAX_VALUE);
             option.setWrapText(true);
             option.setDisable(!allowed);
+
             option.setOnAction(event -> {
                 try {
-                    String response = controller.selectDialogueChoice(npc.getId(), choice);
-                    responseLabel.setText(npc.getName() + ":\n" +
-                            (response == null || response.isBlank()
+                    String response =
+                            controller.selectDialogueChoice(
+                                    npc.getId(),
+                                    choice
+                            );
+
+                    responseLabel.setText(
+                            npc.getName() + ":\n"
+                                    + (response == null || response.isBlank()
                                     ? "Nessuna risposta disponibile."
-                                    : response));
+                                    : response)
+                    );
+
                     controller.decreaseSuspicion(5);
                     updateView();
                     checkGameState();
-                    hint.setText("Carisma di Alex: "
-                            + controller.getPlayerStats().getCharisma());
-                    addMessage("Dialogo completato con " + npc.getName() + ".");
-                } catch (IllegalArgumentException | IllegalStateException exception) {
+
+                    hint.setText(
+                            "Carisma di Alex: "
+                                    + controller.getPlayerStats().getCharisma()
+                    );
+
+                    addMessage(
+                            "Dialogo completato con "
+                                    + npc.getName() + "."
+                    );
+
+                } catch (IllegalArgumentException
+                         | IllegalStateException exception) {
                     responseLabel.setText(exception.getMessage());
                 }
             });
+
             content.getChildren().add(option);
         }
 
@@ -542,7 +633,12 @@ public class GameView {
         scroll.setFitToWidth(true);
         scroll.setPrefViewportWidth(480);
         scroll.setPrefViewportHeight(360);
+
         dialog.getDialogPane().setContent(scroll);
+
+        // applica il tema spaziale anche ai dialoghi dell'equipaggio
+        applyStylesheet(dialog.getDialogPane());
+
         dialog.showAndWait();
     }
 
@@ -562,32 +658,36 @@ public class GameView {
         }
 
         TextInputDialog dialog = new TextInputDialog();
+
         dialog.setTitle("Nuovo rapporto");
         dialog.setHeaderText("Crea un rapporto investigativo");
         dialog.setContentText("Titolo:");
+
+        // applica il CSS alla finestra di creazione del rapporto
+        applyStylesheet(dialog.getDialogPane());
 
         dialog.showAndWait().ifPresent(title -> {
             if (!title.isBlank()) {
                 Report report = controller.createReport(title);
 
-                for (Clue clue : controller.getAstronaut().getNotebook()) {
+                for (Clue clue :
+                        controller.getAstronaut().getNotebook()) {
                     report.addClue(clue);
                 }
 
                 controller.publishReport(report);
+
                 updateView();
                 checkGameState();
 
                 addMessage(
                         "Rapporto pubblicato! Reputazione: "
-                                + controller.getAstronaut()
-                                .getReputation()
+                                + controller.getAstronaut().getReputation()
                 );
 
                 showAlert(
                         "Rapporto completato! Punteggio: "
-                                + controller.getAstronaut()
-                                .getReputation()
+                                + controller.getAstronaut().getReputation()
                 );
             }
         });
@@ -597,7 +697,9 @@ public class GameView {
         Location current = controller.getCurrentLocation();
 
         PlayerStats stats = controller.getPlayerStats();
+
         levelLabel.setText("Livello: " + stats.getLevel());
+
         experienceLabel.setText(
                 "XP: " + stats.getExperience()
                         + "/" + (stats.getLevel() * 100)
@@ -616,40 +718,75 @@ public class GameView {
 
         cluesCountLabel.setText(
                 "Indizi: "
-                        + controller.getAstronaut()
-                        .getNotebook().size()
+                        + controller.getAstronaut().getNotebook().size()
         );
 
-        daysLabel.setText("Giorni: " + controller.getDaysRemaining());
-        daysLabel.setStyle(controller.getDaysRemaining() <= 3
-                ? "-fx-text-fill: #ff5555;"
-                : controller.getDaysRemaining() <= 5
-                ? "-fx-text-fill: #ffbb55;"
-                : "");
-        drawBar(suspicionBar, controller.getSuspicionLevel(),
-                controller.getMaxSuspicion(), Color.web("#ef4444"));
-        drawBar(experienceBar, stats.getExperience(),
-                stats.getLevel() * 100, Color.web("#60a5fa"));
-        drawBar(reputationBar, controller.getAstronaut().getReputation(),
-                100, Color.web("#fbbf24"));
-        experienceValueLabel.setText(stats.getExperience() + " / "
-                + (stats.getLevel() * 100) + " XP");
-        reputationValueLabel.setText(controller.getAstronaut().getReputation() + " / 100");
+        daysLabel.setText(
+                "Giorni: " + controller.getDaysRemaining()
+        );
+
+        daysLabel.setStyle(
+                controller.getDaysRemaining() <= 3
+                        ? "-fx-text-fill: #ff5555;"
+                        : controller.getDaysRemaining() <= 5
+                        ? "-fx-text-fill: #ffbb55;"
+                        : ""
+        );
+
+        drawBar(
+                suspicionBar,
+                controller.getSuspicionLevel(),
+                controller.getMaxSuspicion(),
+                Color.web("#ef4444")
+        );
+
+        drawBar(
+                experienceBar,
+                stats.getExperience(),
+                stats.getLevel() * 100,
+                Color.web("#60a5fa")
+        );
+
+        drawBar(
+                reputationBar,
+                controller.getAstronaut().getReputation(),
+                100,
+                Color.web("#fbbf24")
+        );
+
+        experienceValueLabel.setText(
+                stats.getExperience()
+                        + " / "
+                        + (stats.getLevel() * 100)
+                        + " XP"
+        );
+
+        reputationValueLabel.setText(
+                controller.getAstronaut().getReputation()
+                        + " / 100"
+        );
+
         objectiveLabel.setText(controller.getCurrentObjective());
 
         boolean hasClues = current.getClues().stream()
                 .anyMatch(clue -> !clue.isDiscovered());
+
         collectButton.setVisible(hasClues);
         collectButton.setManaged(hasClues);
+
         if (hasClues) {
-            collectButton.setText("RACCOGLI INDIZI - " + current.getName().toUpperCase());
+            collectButton.setText(
+                    "RACCOGLI INDIZI - "
+                            + current.getName().toUpperCase()
+            );
         }
 
         updateQuests();
 
         cluesList.getItems().clear();
 
-        for (Clue clue : controller.getAstronaut().getNotebook()) {
+        for (Clue clue :
+                controller.getAstronaut().getNotebook()) {
             cluesList.getItems().add(
                     clue.getDescription()
             );
@@ -661,24 +798,51 @@ public class GameView {
 
         for (Quest quest : controller.getActiveQuests()) {
             StringBuilder details = new StringBuilder(
-                    quest.getTitle() + " (" + quest.getCompletedObjectivesCount()
-                            + "/" + quest.getTotalObjectivesCount() + ")"
+                    quest.getTitle()
+                            + " ("
+                            + quest.getCompletedObjectivesCount()
+                            + "/"
+                            + quest.getTotalObjectivesCount()
+                            + ")"
             );
+
             for (int i = 0; i < quest.getObjectives().size(); i++) {
                 details.append("\n")
-                        .append(quest.isObjectiveCompleted(i) ? "✓ " : "○ ")
+                        .append(
+                                quest.isObjectiveCompleted(i)
+                                        ? "✓ "
+                                        : "○ "
+                        )
                         .append(quest.getObjectives().get(i));
             }
+
             int total = quest.getTotalObjectivesCount();
             int completed = quest.getCompletedObjectivesCount();
-            int filled = total == 0 ? 0 : (int) Math.round(10.0 * completed / total);
-            details.append("\n").append("█".repeat(filled))
+
+            int filled = total == 0
+                    ? 0
+                    : (int) Math.round(
+                    10.0 * completed / total
+            );
+
+            details.append("\n")
+                    .append("█".repeat(filled))
                     .append("░".repeat(10 - filled));
+
             questsList.getItems().add(details.toString());
         }
 
         for (Quest quest : controller.getCompletedQuests()) {
-            questsList.getItems().add("✓ " + quest.getTitle() + " — COMPLETATA");
+            questsList.getItems().add(
+                    "✓ " + quest.getTitle() + " — COMPLETATA"
+            );
+        }
+    }
+
+    // applica il tema spaziale ai dialoghi JavaFX
+    private void applyStylesheet(DialogPane pane) {
+        if (styleSheetPath != null) {
+            pane.getStylesheets().add(styleSheetPath);
         }
     }
 
@@ -688,6 +852,10 @@ public class GameView {
         );
 
         alert.setContentText(message);
+
+        // applica il CSS anche ai messaggi informativi
+        applyStylesheet(alert.getDialogPane());
+
         alert.showAndWait();
     }
 }
