@@ -609,7 +609,7 @@ public class GameView {
                                     : response)
                     );
 
-                    controller.decreaseSuspicion(5);
+
                     updateView();
                     checkGameState();
 
