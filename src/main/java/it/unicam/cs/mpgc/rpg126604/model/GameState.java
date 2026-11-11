@@ -1,11 +1,10 @@
-
 package it.unicam.cs.mpgc.rpg126604.model;
 
 // dati necessari a ripristinare una partita salvata
 public class GameState {
 
     private final Astronaut astronaut;
-    private String currentLocationId;
+    private final String currentLocationId;
 
     public GameState(Astronaut astronaut, String currentLocationId) {
         if (astronaut == null) {
@@ -25,13 +24,5 @@ public class GameState {
 
     public String getCurrentLocationId() {
         return currentLocationId;
-    }
-
-    public void setCurrentLocationId(String locationId) {
-        if (locationId == null || locationId.isBlank()) {
-            throw new IllegalArgumentException("Posizione non valida");
-        }
-
-        this.currentLocationId = locationId;
     }
 }
