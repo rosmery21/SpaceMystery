@@ -1,5 +1,6 @@
-
 package it.unicam.cs.mpgc.rpg126604.model;
+
+import it.unicam.cs.mpgc.rpg126604.interfaces.Identifiable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +12,7 @@ import java.util.List;
  * e una ricompensa in punti esperienza.
  */
 // una missione con obiettivi e ricompense
-public class Quest {
+public class Quest implements Identifiable {
 
     private final String id;
     private final String title;
@@ -56,6 +57,7 @@ public class Quest {
         this.completed = false;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -115,5 +117,19 @@ public class Quest {
 
     public int getTotalObjectivesCount() {
         return objectives.size();
+    }
+
+    // Due missioni sono uguali se hanno lo stesso identificativo.
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Quest other)) return false;
+        return this.id != null && this.id.equals(other.id);
+    }
+
+    // Restituisce un codice hash basato sull'identificativo della missione.
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }
