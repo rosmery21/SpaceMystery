@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// una stanza esplorabile della stazione spaziale
 public class Location implements Identifiable, Describable {
 
     private final String id;

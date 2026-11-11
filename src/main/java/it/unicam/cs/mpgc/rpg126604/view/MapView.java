@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+// disegna la mappa e gestisce il movimento di Alex
 public class MapView {
 
     private static final int COLUMNS = 3;

@@ -19,6 +19,7 @@ import java.util.List;
  * Carica i dati di SpaceMystery dai file JSON
  * presenti nelle risorse del progetto.
  */
+// carica i dati della missione dai file JSON
 public class GameDataLoader {
 
     private final Gson gson;

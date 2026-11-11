@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+// mostra la schermata iniziale di SpaceMystery
 public class WelcomeView {
 
     private static final int WIDTH = 1280;

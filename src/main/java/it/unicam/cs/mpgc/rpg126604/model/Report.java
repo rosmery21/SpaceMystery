@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// un rapporto investigativo costruito dagli indizi raccolti
 public class Report implements Publishable {
 
     private final String id;

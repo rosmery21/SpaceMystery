@@ -18,6 +18,7 @@ import it.unicam.cs.mpgc.rpg126604.model.Report;
  * @version 1.0
  */
 @FunctionalInterface
+// strategia per calcolare la reputazione dagli indizi
 public interface ReputationCalculator {
 
     /**

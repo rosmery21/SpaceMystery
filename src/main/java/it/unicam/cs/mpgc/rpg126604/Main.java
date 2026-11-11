@@ -8,6 +8,7 @@ import it.unicam.cs.mpgc.rpg126604.view.WelcomeView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+// punto di ingresso dell’applicazione JavaFX
 public class Main extends Application {
 
     @Override

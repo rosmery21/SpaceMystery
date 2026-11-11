@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+// costruisce e aggiorna l’interfaccia principale del gioco
 public class GameView {
 
     private final GameController controller;

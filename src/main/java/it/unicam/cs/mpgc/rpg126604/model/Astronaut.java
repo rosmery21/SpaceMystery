@@ -20,6 +20,7 @@ import java.util.List;
  *
  * @version 1.0
  */
+// Alex, il personaggio controllato dal giocatore
 public class Astronaut extends GameCharacter {
 
     private int reputation;

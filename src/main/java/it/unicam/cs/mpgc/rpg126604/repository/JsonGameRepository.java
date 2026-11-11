@@ -9,6 +9,7 @@ import it.unicam.cs.mpgc.rpg126604.model.GameState;
 import java.io.*;
 import java.nio.file.*;
 
+// salva e carica lo stato del gioco in formato JSON
 public class JsonGameRepository implements GameRepository {
 
     private static final String SAVE_FILE = "savegame.json";

@@ -11,6 +11,7 @@ import it.unicam.cs.mpgc.rpg126604.model.GameState;
  *
  * @version 1.0
  */
+// contratto per salvare e recuperare la partita
 public interface GameRepository {
 
     /**

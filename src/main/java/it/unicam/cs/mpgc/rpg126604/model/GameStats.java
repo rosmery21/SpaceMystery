@@ -1,6 +1,7 @@
 
 package it.unicam.cs.mpgc.rpg126604.model;
 
+// calcoli e riepiloghi delle statistiche della missione
 public class GameStats {
 
     private final Astronaut astronaut;

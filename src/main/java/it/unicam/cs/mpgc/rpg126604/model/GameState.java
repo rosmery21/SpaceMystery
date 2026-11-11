@@ -1,6 +1,7 @@
 
 package it.unicam.cs.mpgc.rpg126604.model;
 
+// dati necessari a ripristinare una partita salvata
 public class GameState {
 
     private final Astronaut astronaut;

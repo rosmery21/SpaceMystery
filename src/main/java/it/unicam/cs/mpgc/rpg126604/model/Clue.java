@@ -5,6 +5,7 @@ import it.unicam.cs.mpgc.rpg126604.interfaces.Identifiable;
 import it.unicam.cs.mpgc.rpg126604.interfaces.Describable;
 import it.unicam.cs.mpgc.rpg126604.interfaces.Discoverable;
 
+// un indizio recuperabile durante l’esplorazione
 public class Clue implements Identifiable, Describable, Discoverable {
 
     private final String id;

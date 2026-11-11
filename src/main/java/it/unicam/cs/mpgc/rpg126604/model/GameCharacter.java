@@ -11,6 +11,7 @@ package it.unicam.cs.mpgc.rpg126604.model;
  *
  * @version 1.0
  */
+// classe base condivisa da astronauta e personaggi della stazione
 public abstract class GameCharacter {
 
     private String name;

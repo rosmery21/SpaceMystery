@@ -10,6 +10,7 @@ import java.util.List;
  * Ogni missione contiene obiettivi da completare
  * e una ricompensa in punti esperienza.
  */
+// una missione con obiettivi e ricompense
 public class Quest {
 
     private final String id;

@@ -8,6 +8,7 @@ package it.unicam.cs.mpgc.rpg126604.model;
  * - Carisma: possibilità di dialogo con gli NPC
  * - Furtività: accesso ad aree riservate
  */
+// abilità e punti esperienza dell’astronauta
 public class PlayerStats {
 
     private int intelligence;

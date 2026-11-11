@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// un membro dell’equipaggio con cui Alex può parlare
 public class NPC extends GameCharacter implements Identifiable {
 
     private String id;

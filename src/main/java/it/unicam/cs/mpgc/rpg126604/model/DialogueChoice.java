@@ -6,6 +6,7 @@ package it.unicam.cs.mpgc.rpg126604.model;
  * Ogni scelta può richiedere un livello minimo di carisma
  * e può fornire indizi o punti esperienza all'astronauta.
  */
+// una possibile risposta durante un dialogo con l’equipaggio
 public class DialogueChoice {
 
     private final String text;

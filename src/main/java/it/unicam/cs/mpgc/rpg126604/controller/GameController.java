@@ -6,6 +6,7 @@ import it.unicam.cs.mpgc.rpg126604.repository.GameDataLoader;
 
 import java.util.*;
 
+// coordina esplorazione, indizi, dialoghi e missioni della stazione
 public class GameController {
 
     private final GameRepository repository;
@@ -18,6 +19,8 @@ public class GameController {
     private Location currentLocation;
     private int suspicionLevel;
     private int daysRemaining;
+    // Membri dell’equipaggio con cui Alex ha completato un dialogo.
+    private final Set<String> contactedNPCs = new HashSet<>();
     private static final int MAX_SUSPICION = 100;
     private static final int MAX_DAYS = 10;
 
@@ -191,6 +194,7 @@ public class GameController {
             }
         }
 
+        contactedNPCs.add(npcId);
         updateDialogueObjectives(npcId);
         return choice.getResponse();
     }
@@ -302,31 +306,25 @@ public class GameController {
      * Suggerisce il prossimo passo della missione senza modificare lo stato di gioco.
      */
     public String getCurrentObjective() {
-        int clues = (int) locations.values().stream()
-                .flatMap(location -> location.getClues().stream())
-                .filter(Clue::isDiscovered)
-                .count();
-
-        int contacts = (int) npcs.values().stream()
-                .filter(npc -> npc.getCluesProvided().stream()
-                        .anyMatch(Clue::isDiscovered))
-                .count();
-
-        int reputation = astronaut.getReputation();
-
-        if (clues == 0) {
-            return "OBIETTIVO:\nEsplora la stazione e cerca indizi!";
-        } else if (clues < 3) {
-            return "OBIETTIVO:\nRaccogli altri indizi! (" + clues + "/3)";
-        } else if (contacts < 2) {
-            return "OBIETTIVO:\nParla con l'equipaggio! (" + contacts + "/2)";
-        } else if (clues < 5) {
-            return "OBIETTIVO:\nContinua a investigare! (" + clues + "/5 indizi)";
-        } else if (reputation == 0) {
-            return "OBIETTIVO:\nPrepara e pubblica il primo rapporto!";
-        } else if (reputation < 100) {
-            return "OBIETTIVO:\nPubblica altri rapporti! (" + reputation + "/100 reputazione)";
+        // Mostra il primo obiettivo ancora da completare delle missioni attive.
+        for (Quest quest : astronaut.getActiveQuests()) {
+            List<String> objectives = quest.getObjectives();
+            for (int i = 0; i < objectives.size(); i++) {
+                if (!quest.isObjectiveCompleted(i)) {
+                    return objectives.get(i);
+                }
+            }
         }
+
+        // La missione principale non è conclusa finché la reputazione
+        // non raggiunge la soglia di vittoria.
+        int reputation = astronaut.getReputation();
+        if (reputation < 100) {
+            return reputation == 0
+                    ? "Prepara e pubblica il primo rapporto!"
+                    : "Pubblica altri rapporti! (" + reputation + "/100 reputazione)";
+        }
+
         return "MISSIONE COMPLETATA!";
     }
 
@@ -339,4 +337,5 @@ public class GameController {
         return repository.hasSavedGame();
     }
 }
+
 
