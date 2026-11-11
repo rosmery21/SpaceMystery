@@ -1,4 +1,3 @@
-
 package it.unicam.cs.mpgc.rpg126604.model;
 
 import it.unicam.cs.mpgc.rpg126604.interfaces.ReputationCalculator;
@@ -68,7 +67,7 @@ public class Astronaut extends GameCharacter {
      * Presenta l'astronauta e il suo ruolo nella missione.
      */
     @Override
-    public void presentati() {
+    public void introduceSelf() {
         System.out.println("Sono " + getName()
                 + ", astronauta a bordo della SpaceMystery.");
     }

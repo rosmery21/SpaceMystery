@@ -1,4 +1,3 @@
-
 package it.unicam.cs.mpgc.rpg126604.model;
 
 import it.unicam.cs.mpgc.rpg126604.interfaces.Identifiable;
@@ -7,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// un membro dell’equipaggio con cui Alex può parlare
+// un membro dell'equipaggio con cui Alex può parlare
 public class NPC extends GameCharacter implements Identifiable {
 
     private String id;
@@ -37,7 +36,7 @@ public class NPC extends GameCharacter implements Identifiable {
     }
 
     @Override
-    public void presentati() {
+    public void introduceSelf() {
         System.out.println("Sono " + getName()
                 + ", " + getRole() + " della stazione spaziale.");
     }

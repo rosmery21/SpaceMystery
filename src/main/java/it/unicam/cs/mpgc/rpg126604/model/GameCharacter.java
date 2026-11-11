@@ -1,4 +1,3 @@
-
 package it.unicam.cs.mpgc.rpg126604.model;
 
 /**
@@ -6,7 +5,7 @@ package it.unicam.cs.mpgc.rpg126604.model;
  * Ogni personaggio ha un nome e un ruolo nel sistema.
  *
  * Le sottoclassi devono implementare il metodo
- * {@link #presentati()} per definire come il personaggio
+ * {@link #introduceSelf()} per definire come il personaggio
  * si presenta.
  *
  * @version 1.0
@@ -65,7 +64,7 @@ public abstract class GameCharacter {
      * Metodo astratto che ogni personaggio deve implementare
      * per definire come si presenta.
      */
-    public abstract void presentati();
+    public abstract void introduceSelf();
 
     @Override
     public String toString() {
