@@ -1,5 +1,5 @@
 
-# SpaceMystery
+# 🚀 SpaceMystery
 ## Wiki del Progetto
 
 ---
@@ -13,8 +13,10 @@
 5. [Interfacce](#5-interfacce)
 6. [Persistenza dei Dati](#6-persistenza-dei-dati)
 7. [Estensibilità](#7-estensibilità)
-8. [Principi SOLID](#8-principi-solid-applicati)
-9. [Dichiarazione Uso AI](#9-dichiarazione-uso-ai)
+8. [Principi SOLID Applicati](#8-principi-solid-applicati)
+9. [Altri Design Pattern Utilizzati](#9-altri-design-pattern-utilizzati)
+10. [Verifica e Test](#10-verifica-e-test)
+11. [Dichiarazione Uso AI](#11-dichiarazione-uso-ai)
 
 ---
 
@@ -22,52 +24,76 @@
 
 **SpaceMystery** è un gioco di ruolo investigativo ambientato in una stazione spaziale.
 
-Il protagonista è **Alex**, un astronauta che deve esplorare i diversi ambienti della stazione, raccogliere indizi e pubblicare rapporti investigativi per aumentare la propria reputazione e scoprire i misteri della missione.
+Il protagonista è **Alex**, un astronauta che deve esplorare gli ambienti della stazione, raccogliere indizi, interrogare i membri dell'equipaggio e pubblicare rapporti investigativi per aumentare la propria reputazione.
 
-Il progetto è sviluppato in **Java**, con interfaccia grafica **JavaFX**, applicando i principi e gli strumenti studiati durante il corso di Metodologie di Programmazione.
+La missione consiste nel raggiungere **100 punti di reputazione entro 10 giorni**, evitando che il livello di sospetto raggiunga 100.
+
+Il progetto è sviluppato in **Java 24**, con interfaccia grafica **JavaFX 24.0.1**, applicando i principi studiati durante il corso di Metodologie di Programmazione.
 
 ---
 
 ## 2. Funzionalità Implementate
 
-- **Mappa interattiva** — esplorazione della stazione spaziale con movimento del personaggio tramite tasti WASD o frecce direzionali.
-- **Sistema di esplorazione** — il giocatore visita i diversi ambienti della stazione e raccoglie indizi.
-- **Taccuino investigativo** — raccolta e visualizzazione degli indizi scoperti durante la missione.
-- **Sistema di rapporti** — creazione e pubblicazione di rapporti investigativi utilizzando gli indizi raccolti.
-- **Sistema di reputazione** — la reputazione di Alex aumenta in base agli indizi utilizzati nei rapporti.
-- **Dialoghi a scelta multipla** — conversazioni con Vega, Orion e Nova, con opzioni che richiedono un determinato livello di carisma.
-- **Sistema RPG** — statistiche di intelligenza, carisma e furtività, esperienza e avanzamento di livello.
-- **Sistema di missioni** — obiettivi da completare, avanzamento e visualizzazione delle missioni attive e completate.
-- **Livello di sospetto** — indicatore che aumenta con le azioni rischiose e può causare il fallimento della missione.
-- **Tempo limitato** — Alex ha 10 giorni per portare a termine la missione.
-- **Obiettivo attuale** — indicazioni dinamiche che guidano il giocatore nelle diverse fasi dell'indagine.
-- **Registro Missione** — messaggi sulle azioni effettuate e sugli eventi importanti.
-- **Persistenza dei dati** — salvataggio e caricamento dello stato di gioco in formato JSON.
-- **Schermata introduttiva** — presentazione del gioco con tutorial ed effetto di scrittura animata.
+- **Mappa interattiva** — esplorazione della stazione spaziale tramite WASD o frecce direzionali.
+- **Command Pattern** — associazione dei tasti a comandi di movimento indipendenti.
+- **Esplorazione** — visita degli ambienti della stazione e raccolta degli indizi.
+- **Indizi esclusivi** — alcuni indizi si ottengono soltanto scegliendo determinate risposte nei dialoghi.
+- **Taccuino investigativo** — visualizzazione degli indizi raccolti.
+- **Rapporti investigativi** — creazione e pubblicazione di rapporti utilizzando gli indizi scoperti.
+- **Reputazione** — progressione verso l'obiettivo finale di 100 punti.
+- **Dialoghi a scelta multipla** — conversazioni con la Dott.ssa Vega, il Comandante Orion e l'Ingegnere Nova.
+- **Requisiti di carisma** — alcune risposte sono disponibili soltanto quando Alex possiede il carisma necessario.
+- **Sistema RPG** — intelligenza, carisma, furtività, esperienza e livelli.
+- **Missioni** — obiettivi aggiornati automaticamente durante l'indagine.
+- **Sospetto** — indicatore che aumenta con alcune azioni e può causare il fallimento della missione.
+- **Tempo limitato** — 10 giorni per completare la missione.
+- **Obiettivo attuale** — indicazioni sui progressi ancora necessari.
+- **Registro Missione** — messaggi e aggiornamenti sulle azioni del giocatore.
+- **Persistenza JSON** — salvataggio e caricamento dello stato di gioco.
+- **Schermata introduttiva** — presentazione della storia e tutorial.
+
+### Indizi esclusivi dei dialoghi
+
+SpaceMystery distingue due tipi di indizi:
+
+1. **Indizi esplorabili**, associati a un ambiente tramite `locationId`.
+2. **Indizi esclusivi dei dialoghi**, con `locationId` impostato a `null`.
+
+Gli indizi esclusivi vengono assegnati quando Alex seleziona una risposta con il requisito di carisma richiesto.
+
+| NPC | Carisma richiesto | Indizio |
+|---|---|---|
+| Dott.ssa Vega | 7 | `indizio_007` |
+| Comandante Orion | 8 | `indizio_008` |
+| Ingegnere Nova | 7 | `indizio_009` |
+
+In questo modo, parlare con l'equipaggio permette di ottenere informazioni che non possono essere trovate semplicemente esplorando le stanze.
 
 ---
 
 ## 3. Architettura MVC
 
-Il progetto segue il pattern architetturale **Model-View-Controller (MVC)**, che permette di separare i dati, l'interfaccia grafica e la logica del gioco.
+SpaceMystery utilizza il pattern **Model-View-Controller (MVC)** per separare le responsabilità dell'applicazione.
 
 ### Model
 
-Contiene le classi che rappresentano gli elementi del gioco, come l'astronauta, gli indizi, i rapporti investigativi e gli ambienti della stazione spaziale.
+Il Model contiene le classi che rappresentano gli elementi del gioco: personaggi, ambienti, indizi, rapporti, statistiche e missioni.
 
-Non dipende dalla View né dal Controller.
+Gestisce lo stato e i comportamenti del dominio senza occuparsi della rappresentazione grafica.
 
 ### View
 
-Contiene le classi JavaFX che gestiscono l'interfaccia grafica, la schermata iniziale e la mappa interattiva.
+La View contiene le schermate JavaFX.
 
-Comunica con il Controller per ottenere e aggiornare le informazioni del gioco.
+Mostra le informazioni del gioco e inoltra al Controller le azioni effettuate dal giocatore.
 
 ### Controller
 
-Collega il Model e la View.
+Il Controller coordina il Model e la View.
 
-Gestisce le azioni del giocatore, come l'esplorazione, la raccolta degli indizi e la pubblicazione dei rapporti investigativi, coordinando anche il salvataggio dei dati.
+Gestisce esplorazione, raccolta degli indizi, dialoghi, missioni, rapporti, sospetto, giorni disponibili e persistenza.
+
+La separazione MVC facilita la manutenzione e l'estensione del progetto.
 
 ---
 
@@ -77,231 +103,323 @@ Gestisce le azioni del giocatore, come l'esplorazione, la raccolta degli indizi 
 
 #### `GameCharacter` (abstract)
 
-Classe astratta che rappresenta i personaggi del gioco.
+Classe astratta che rappresenta le caratteristiche comuni dei personaggi del gioco.
 
-- Gestisce le informazioni comuni dei personaggi.
-- Definisce il comportamento condiviso da `Astronaut` e `NPC`.
+Fornisce una base condivisa per `Astronaut` e `NPC`.
 
 #### `Astronaut`
 
-Rappresenta Alex, l'astronauta controllato dal giocatore.
+Rappresenta Alex, il protagonista controllato dal giocatore.
 
-- Gestisce il taccuino degli indizi raccolti.
-- Tiene traccia dei rapporti investigativi pubblicati.
-- Memorizza gli ambienti visitati.
-- Aggiorna la reputazione quando viene pubblicato un rapporto.
+Responsabilità:
+
+- Gestire il taccuino investigativo.
+- Conservare i rapporti.
+- Tenere traccia degli ambienti visitati.
+- Gestire missioni attive e completate.
+- Memorizzare statistiche e reputazione.
 
 #### `NPC`
 
-Rappresenta i personaggi non giocanti presenti nella stazione spaziale.
+Rappresenta i membri dell'equipaggio.
 
-- Contiene le informazioni e i dialoghi dei personaggi.
-- Gestisce gli indizi associati agli NPC.
-- Estende `GameCharacter`.
+Contiene le informazioni dei personaggi, i dialoghi e le scelte disponibili.
+
+Alcune scelte possono fornire indizi esclusivi.
 
 #### `Location`
 
 Rappresenta un ambiente esplorabile della stazione spaziale.
 
-- Contiene gli indizi presenti nell'ambiente.
-- Tiene traccia degli ambienti visitati.
-- Implementa `Identifiable` e `Describable`.
+Contiene descrizione, identificativo, indizi associati e informazioni sullo stato di visita.
+
+Implementa `Identifiable` e `Describable`.
 
 #### `Clue`
 
-Rappresenta un indizio che il giocatore può raccogliere.
+Rappresenta un indizio investigativo.
 
-- Contiene la descrizione dell'indizio.
-- Tiene traccia della sua scoperta.
-- Implementa `Identifiable`, `Describable` e `Discoverable`.
+Responsabilità:
+
+- Conservare identificativo e descrizione.
+- Registrare se l'indizio è stato scoperto.
+- Associare eventualmente l'indizio a una stanza.
+
+Implementa `Identifiable`, `Describable` e `Discoverable`.
+
+Quando `locationId` è `null`, l'indizio può essere ottenuto tramite un dialogo specifico invece che attraverso l'esplorazione.
 
 #### `Report`
 
 Rappresenta un rapporto investigativo creato da Alex.
 
-- Contiene gli indizi utilizzati nel rapporto.
-- Contribuisce al calcolo della reputazione: ogni indizio utilizzato vale 10 punti.
-- Implementa `Identifiable` e `Publishable`.
+Contiene gli indizi utilizzati e contribuisce all'aumento della reputazione.
+
+Implementa `Identifiable` e `Publishable`.
 
 #### `PlayerStats`
 
-Gestisce le statistiche RPG di Alex: intelligenza, carisma, furtività, livello ed esperienza.
+Gestisce le statistiche RPG:
 
-Il passaggio di livello avviene automaticamente ogni 100 punti esperienza.
+- Intelligenza.
+- Carisma.
+- Furtività.
+- Livello.
+- Esperienza.
+
+Controlla anche i requisiti di carisma delle scelte di dialogo.
 
 #### `Quest`
 
-Rappresenta una missione con più obiettivi e ne tiene traccia fino al completamento.
+Rappresenta una missione con uno o più obiettivi.
+
+Memorizza gli obiettivi completati e verifica il completamento della missione.
 
 #### `DialogueChoice`
 
-Rappresenta un'opzione di dialogo con testo, risposta, requisito di carisma e possibile ricompensa in esperienza.
+Rappresenta una scelta di dialogo.
+
+Contiene:
+
+- Testo della scelta.
+- Risposta del personaggio.
+- Requisito minimo di carisma.
+- Ricompensa in esperienza.
+- Eventuale identificativo dell'indizio assegnato.
 
 #### `GameState`
 
-Rappresenta lo stato corrente del gioco.
+Rappresenta lo stato da salvare.
 
-- Contiene le informazioni sul giocatore e sulla posizione corrente.
-- Permette il salvataggio e il caricamento dello stato tramite JSON.
+Contiene i dati dell'astronauta, l'identificativo della posizione corrente, il livello di sospetto, i giorni rimanenti e i personaggi già contattati.
+
+#### `GameStats`
+
+Fornisce informazioni statistiche sullo stato del gioco e sui progressi di Alex.
 
 ### Package `controller`
 
 #### `GameController`
 
-Controller principale del gioco.
+È il controller principale di SpaceMystery.
 
-- Inizializza il gioco caricando i dati dai file JSON.
-- Gestisce lo spostamento tra gli ambienti della stazione.
-- Coordina la raccolta degli indizi.
-- Gestisce la creazione e la pubblicazione dei rapporti investigativi.
-- Coordina il salvataggio e il caricamento dello stato di gioco.
-- Gestisce il livello di sospetto e i giorni rimanenti.
-- Aggiorna gli obiettivi delle missioni dopo esplorazione, raccolta di indizi e dialoghi.
-- Fornisce l'obiettivo corrente tramite `getCurrentObjective()`, guidando il giocatore passo dopo passo in base agli obiettivi ancora da completare.
-- Utilizza `ReputationCalculator` come espressione lambda per il calcolo della reputazione attraverso i rapporti investigativi.
+Responsabilità:
+
+- Caricare i dati iniziali dai file JSON.
+- Gestire gli spostamenti tra gli ambienti.
+- Coordinare la raccolta degli indizi.
+- Gestire i dialoghi e i requisiti di carisma.
+- Assegnare gli indizi esclusivi dei dialoghi.
+- Aggiornare gli obiettivi delle missioni.
+- Gestire i rapporti investigativi.
+- Aggiornare sospetto e giorni rimanenti.
+- Salvare e caricare la partita.
+- Fornire l'obiettivo corrente tramite `getCurrentObjective()`.
+
+Il controller mantiene una mappa degli indizi:
+
+```java
+private final Map<String, Clue> clues;
+```
+
+Questa struttura permette di cercare un indizio tramite identificativo anche quando non appartiene a una stanza.
+
+Il metodo:
+
+```java
+private Clue findClueById(String clueId) {
+    return clues.get(clueId);
+}
+```
+
+consente quindi di recuperare sia gli indizi esplorabili sia quelli esclusivi dei dialoghi.
 
 ### Package `repository`
 
 #### `JsonGameRepository`
 
-Implementazione concreta dell'interfaccia `GameRepository`.
+Implementa `GameRepository` utilizzando Gson.
 
-- Salva lo stato del gioco in formato JSON.
-- Carica lo stato di gioco da un file JSON.
-- Utilizza la libreria Gson.
+Gestisce la scrittura e la lettura dello stato di gioco in formato JSON.
 
 #### `GameDataLoader`
 
-Classe responsabile del caricamento dei dati iniziali del gioco.
+Carica i dati iniziali da:
 
-- Carica gli ambienti della stazione.
-- Carica gli indizi disponibili.
-- Carica i personaggi non giocanti (NPC).
-- Carica le missioni definite in `quests.json`.
-- Utilizza le classi interne `NpcData`, `ChoiceData` e `QuestData` per la deserializzazione dei dati JSON.
+- `locations.json`
+- `clues.json`
+- `npcs.json`
+- `quests.json`
+
+Utilizza Gson per la deserializzazione dei dati.
 
 ### Package `view`
 
 #### `GameView`
 
-Interfaccia grafica principale del gioco.
+Rappresenta la schermata principale del gioco.
 
-- Visualizza le informazioni dell'ambiente corrente.
-- Permette di consultare il taccuino investigativo.
-- Gestisce le azioni del giocatore e la pubblicazione dei rapporti.
-- Mostra statistiche RPG, reputazione, sospetto, giorni rimanenti e missioni.
-- Visualizza l'obiettivo corrente e il Registro Missione.
-- Mostra il pulsante per raccogliere indizi solo se nella stanza ne restano da scoprire.
+Mostra:
+
+- Ambiente corrente.
+- Taccuino investigativo.
+- Missioni.
+- Statistiche RPG.
+- Reputazione.
+- Sospetto.
+- Giorni rimanenti.
+- Obiettivo attuale.
+- Registro Missione.
+
+Il pulsante **RACCOGLI INDIZI** compare soltanto quando nell'ambiente corrente sono presenti indizi ancora da scoprire.
+
+Il pulsante **CREA RAPPORTO** viene disabilitato automaticamente quando il taccuino è vuoto, utilizzando un binding JavaFX.
+
+L'interfaccia utilizza il foglio di stile condiviso `style.css`, applicato anche alle finestre di dialogo.
 
 #### `MapView`
 
-Vista della mappa interattiva della stazione spaziale.
+Gestisce la rappresentazione della stazione spaziale e il movimento di Alex.
 
-- Visualizza gli ambienti esplorabili.
-- Gestisce il movimento del personaggio tramite WASD o frecce direzionali, utilizzando `AnimationTimer` per l'animazione.
-- Permette di spostarsi tra gli ambienti della stazione.
+Utilizza JavaFX Canvas e `AnimationTimer`.
+
+Il movimento tramite WASD e frecce direzionali è organizzato attraverso il Command Pattern.
 
 #### `WelcomeView`
 
-Schermata introduttiva del gioco.
+Rappresenta la schermata introduttiva.
 
-- Presenta SpaceMystery e la sua ambientazione.
-- Mostra un tutorial sulle principali meccaniche.
-- Utilizza un effetto di scrittura animata per il testo.
-- Presenta uno sfondo spaziale in stile pixel art, disegnato tramite Canvas JavaFX.
+Presenta l'ambientazione di SpaceMystery e un tutorial sulle principali meccaniche.
 
-### Classe `GameStats`
-
-Classe dedicata alle statistiche di gioco.
-
-- Utilizza le Stream API di Java.
-- Calcola statistiche relative agli indizi raccolti.
-- Fornisce informazioni sulla reputazione e sui progressi del giocatore.
-- Utilizza le Stream API anche per raggruppare gli indizi in base al loro stato, quando previsto dai dati disponibili.
+Utilizza un effetto di scrittura animata e una rappresentazione grafica spaziale.
 
 ---
 
 ## 5. Interfacce
 
-Il progetto applica il principio **Interface Segregation Principle (ISP)** attraverso interfacce piccole e specifiche, ognuna con una responsabilità precisa.
+SpaceMystery utilizza interfacce per definire contratti e separare le responsabilità.
 
-| Interfaccia | Responsabilità | Implementata da |
+| Interfaccia | Responsabilità | Utilizzo |
 |---|---|---|
-| `GameRepository` | Gestisce il salvataggio e il caricamento dello stato di gioco | `JsonGameRepository` |
-| `Identifiable` | Fornisce un identificativo univoco | `Clue`, `Location`, `Report` |
-| `Describable` | Fornisce una descrizione | `Clue`, `Location` |
-| `Discoverable` | Definisce il comportamento degli elementi che possono essere scoperti | `Clue` |
-| `Publishable` | Definisce il comportamento degli elementi pubblicabili | `Report` |
-| `ReputationCalculator` | Calcola la reputazione attraverso una funzione lambda | Implementata tramite lambda |
+| `GameRepository` | Salvataggio e caricamento dello stato | `JsonGameRepository` |
+| `Identifiable` | Identificativo univoco | `Clue`, `Location`, `Report` |
+| `Describable` | Descrizione di un elemento | `Clue`, `Location` |
+| `Discoverable` | Gestione dello stato di scoperta | `Clue` |
+| `Publishable` | Pubblicazione di un elemento | `Report` |
+| `ReputationCalculator` | Calcolo della reputazione | Funzione lambda |
+
+Le interfacce permettono di mantenere separati i contratti dalle implementazioni concrete.
 
 ---
 
 ## 6. Persistenza dei Dati
 
-SpaceMystery utilizza il formato **JSON** e la libreria **Gson** per gestire i dati del gioco.
+SpaceMystery utilizza **JSON** e la libreria **Gson**.
 
-### Dati di configurazione (statici)
+### Dati di configurazione
 
-Le informazioni iniziali del gioco sono definite in file JSON presenti nella cartella `src/main/resources/`:
+I dati iniziali si trovano in `src/main/resources/`.
 
-- `locations.json` — contiene gli ambienti della stazione spaziale.
-- `clues.json` — contiene gli indizi disponibili.
-- `npcs.json` — contiene i personaggi non giocanti.
-- `quests.json` — contiene le missioni e i relativi obiettivi.
+| File | Contenuto |
+|---|---|
+| `locations.json` | Ambienti della stazione |
+| `clues.json` | 9 indizi: 6 esplorabili e 3 esclusivi dei dialoghi |
+| `npcs.json` | 3 NPC con dialoghi e scelte |
+| `quests.json` | Missioni e relativi obiettivi |
 
-Questi dati vengono caricati all'avvio attraverso la classe `GameDataLoader`.
+Il caricamento è gestito da `GameDataLoader`.
 
-### Stato di gioco (dinamico)
+### Stato di gioco
 
-Lo stato del gioco viene salvato in formato JSON nel file `savegame.json`.
+Lo stato dinamico viene salvato nel file `savegame.json` attraverso `JsonGameRepository`.
 
-Il salvataggio permette di conservare le informazioni sul giocatore, gli indizi raccolti e i progressi della missione.
+Il controller crea un oggetto `GameState` che contiene:
 
-La classe `JsonGameRepository` implementa l'interfaccia `GameRepository` e utilizza **Gson** per gestire il salvataggio e il caricamento dei dati.
+- L'oggetto `Astronaut`.
+- L'identificativo dell'ambiente corrente.
+- Il livello di sospetto.
+- I giorni rimanenti.
+- L'insieme degli NPC già contattati.
+
+Il metodo `saveGame()` passa questo stato al repository.
+
+Il metodo `loadGame()` ripristina le informazioni salvate e riallinea gli indizi scoperti, gli ambienti visitati e gli obiettivi delle missioni.
+
+Il salvataggio viene richiamato durante diverse azioni di gioco, tra cui spostamenti, raccolta degli indizi, dialoghi e pubblicazione dei rapporti.
+
+### Indizi esclusivi e persistenza
+
+Gli indizi ottenibili tramite dialogo hanno `locationId` uguale a `null`.
+
+Durante il caricamento iniziale vengono registrati nella mappa `clues`, senza essere aggiunti a una stanza.
+
+Quando il giocatore seleziona un dialogo che assegna un indizio, `GameController` lo recupera tramite identificativo e lo aggiunge al taccuino.
+
+Il salvataggio conserva l'indizio raccolto insieme agli altri progressi del giocatore.
 
 ---
 
 ## 7. Estensibilità
 
-SpaceMystery è progettato per permettere l'aggiunta di nuovi contenuti e funzionalità senza modificare l'intera struttura del gioco.
+Il progetto è organizzato per facilitare l'aggiunta di nuovi contenuti.
 
 ### Aggiungere nuovi ambienti
 
-È possibile aggiungere nuovi ambienti della stazione spaziale modificando i dati presenti nel file `locations.json`.
+È possibile definire nuovi ambienti in `locations.json`.
 
-### Aggiungere nuovi NPC
+Il controller li carica automaticamente tramite `GameDataLoader`.
 
-È possibile introdurre nuovi personaggi non giocanti aggiungendo le relative informazioni al file `npcs.json`.
+L'eventuale rappresentazione sulla mappa dipende dai dati e dalla logica prevista da `MapView`.
 
-### Aggiungere nuovi indizi
+### Aggiungere nuovi NPC e dialoghi
 
-Nuovi indizi possono essere definiti nel file `clues.json`, ampliando le possibilità investigative del giocatore.
+È possibile aggiungere personaggi e scelte in `npcs.json`.
+
+Ogni scelta può definire un requisito di carisma e una ricompensa.
+
+### Aggiungere indizi esclusivi
+
+Per creare un indizio ottenibile soltanto attraverso un dialogo:
+
+1. Aggiungere l'indizio in `clues.json`.
+2. Impostare `locationId` a `null`.
+3. Inserire il suo identificativo nel campo `clueId` della scelta in `npcs.json`.
+
+Il controller potrà recuperarlo dalla mappa generale degli indizi.
 
 ### Aggiungere nuove missioni
 
-È possibile definire nuove missioni e i loro obiettivi in `quests.json`, sfruttando il sistema di caricamento già presente.
+È possibile definire missioni in `quests.json`.
 
-### Estendere le statistiche RPG
+Il sistema carica le missioni dal file; per gli obiettivi che richiedono nuovi eventi di gioco può essere necessario estendere la logica di aggiornamento del controller.
 
-La classe `PlayerStats` centralizza le statistiche e la progressione di Alex.
+### Aggiungere nuovi comandi di movimento
+
+Il Command Pattern permette di associare un nuovo tasto a un comando di movimento senza duplicare la logica di aggiornamento del personaggio.
 
 ### Modificare il sistema dei giorni
 
-Il numero massimo di giorni disponibili è definito dalla costante `MAX_DAYS` nella classe `GameController`.
+Il numero massimo di giorni è definito in `GameController`:
 
-Modificando questa costante è possibile aumentare o diminuire il tempo disponibile per completare la missione, senza cambiare il resto della logica di gioco.
+```java
+private static final int MAX_DAYS = 10;
+```
 
-### Aggiungere un nuovo sistema di persistenza
+La costante può essere modificata per cambiare il limite temporale della missione.
 
-È possibile creare una nuova classe che implementa l'interfaccia `GameRepository`, ad esempio `DatabaseGameRepository`, per utilizzare un sistema di salvataggio diverso da JSON.
+### Aggiungere una nuova persistenza
+
+Una nuova classe può implementare `GameRepository`, ad esempio `DatabaseGameRepository`.
+
+Il controller utilizza l'interfaccia, senza dipendere direttamente da `JsonGameRepository`.
 
 ### Aggiungere una nuova interfaccia grafica
 
-Grazie alla separazione MVC, è possibile sviluppare una nuova View mantenendo separate la logica del gioco e la rappresentazione grafica.
+La separazione MVC consente di sviluppare una nuova View riutilizzando la logica del controller.
 
 ### Modificare il calcolo della reputazione
 
-L'interfaccia funzionale `ReputationCalculator` permette di modificare la formula utilizzata per calcolare la reputazione attraverso una funzione lambda.
+L'interfaccia funzionale `ReputationCalculator` consente di rappresentare un algoritmo di calcolo tramite una lambda.
 
 ---
 
@@ -309,76 +427,184 @@ L'interfaccia funzionale `ReputationCalculator` permette di modificare la formul
 
 ### S — Single Responsibility Principle
 
-Ogni classe ha una responsabilità specifica:
+Le responsabilità sono distribuite tra classi differenti:
 
-- `Astronaut` gestisce le informazioni e le attività del protagonista.
-- `GameDataLoader` si occupa del caricamento dei dati iniziali.
-- `JsonGameRepository` gestisce il salvataggio e il caricamento dello stato di gioco.
-- `PlayerStats` gestisce la progressione RPG.
+- `Astronaut` gestisce i dati e le attività del protagonista.
+- `PlayerStats` gestisce le statistiche RPG.
 - `Quest` gestisce gli obiettivi di una missione.
+- `GameDataLoader` carica i dati iniziali.
+- `JsonGameRepository` gestisce la persistenza.
+- `GameView` si occupa della rappresentazione grafica.
 
 ### O — Open/Closed Principle
 
-Il progetto permette di aggiungere nuove funzionalità senza modificare necessariamente le classi esistenti.
+Il progetto può essere esteso attraverso interfacce e dati di configurazione.
 
-- È possibile aggiungere nuovi sistemi di persistenza implementando `GameRepository`.
-- Le interfacce consentono di estendere il comportamento del gioco.
+Esempi:
+
+- Nuovi NPC e dialoghi possono essere definiti nei file JSON.
+- Nuovi indizi possono essere aggiunti senza cambiare la struttura delle classi.
+- Nuove implementazioni di persistenza possono utilizzare `GameRepository`.
+- Nuovi comandi di movimento possono essere registrati tramite il Command Pattern.
 
 ### L — Liskov Substitution Principle
 
-Le classi derivate possono essere utilizzate al posto delle rispettive classi base, rispettandone il comportamento.
+Le sottoclassi possono essere utilizzate attraverso il tipo della classe base.
 
-- `Astronaut` e `NPC` estendono `GameCharacter`.
-- `JsonGameRepository` può essere utilizzato attraverso l'interfaccia `GameRepository`.
+`Astronaut` e `NPC` estendono `GameCharacter`.
+
+Le implementazioni di `GameRepository` possono essere utilizzate tramite il contratto comune.
 
 ### I — Interface Segregation Principle
 
-Il progetto utilizza interfacce piccole e specifiche.
+Il progetto utilizza interfacce specifiche per responsabilità distinte:
 
-- `Clue` implementa soltanto le interfacce necessarie al suo comportamento.
-- Le interfacce `Identifiable`, `Describable`, `Discoverable` e `Publishable` definiscono responsabilità distinte.
-- Ogni classe implementa soltanto le interfacce necessarie alle proprie responsabilità, evitando metodi inutili.
+- `Identifiable`
+- `Describable`
+- `Discoverable`
+- `Publishable`
+- `GameRepository`
+- `ReputationCalculator`
+
+Le classi implementano soltanto i contratti necessari.
 
 ### D — Dependency Inversion Principle
 
-Le classi principali utilizzano astrazioni per ridurre le dipendenze dalle implementazioni concrete.
+`GameController` riceve un `GameRepository` tramite il costruttore.
 
-- `GameRepository` definisce il contratto per la persistenza.
-- `JsonGameRepository` fornisce un'implementazione concreta del contratto.
+```java
+public GameController(GameRepository repository) {
+    // inizializzazione del controller
+}
+```
 
-La struttura permette di utilizzare implementazioni alternative del sistema di salvataggio.
+Questo permette di cambiare l'implementazione della persistenza senza modificare il contratto utilizzato dal controller.
 
 ---
 
-## 9. Dichiarazione Uso AI
+## 9. Altri Design Pattern Utilizzati
+
+### Command Pattern
+
+Il Command Pattern è utilizzato in `MapView` per organizzare il movimento di Alex.
+
+Ogni tasto supportato viene associato a un comando che rappresenta un'azione di movimento.
+
+I comandi sono registrati in una mappa e possono essere richiamati dalla gestione degli input.
+
+Questa soluzione separa l'interpretazione del tasto dall'azione eseguita e riduce la necessità di condizioni ripetute.
+
+### MVC
+
+Il pattern MVC separa:
+
+- Model: dati e comportamenti del dominio.
+- View: rappresentazione grafica JavaFX.
+- Controller: coordinamento delle azioni del giocatore.
+
+### Repository e Dependency Injection
+
+La persistenza è accessibile attraverso `GameRepository`.
+
+L'implementazione concreta viene fornita al controller tramite il costruttore.
+
+Questa scelta riduce l'accoppiamento tra logica di gioco e salvataggio dei dati.
+
+### Espressioni lambda
+
+Il progetto utilizza le espressioni lambda, ad esempio nella gestione degli eventi JavaFX e nell'interfaccia funzionale `ReputationCalculator`.
+
+Non viene utilizzato un `FontRegistry` Singleton: l'aspetto grafico delle schermate è gestito attraverso il CSS e gli stili JavaFX.
+
+---
+
+## 10. Verifica e Test
+
+Durante lo sviluppo è possibile verificare il progetto utilizzando il Gradle Wrapper.
+
+### Compilazione e verifica
+
+Su Windows:
+
+```powershell
+.\gradlew.bat build
+```
+
+Su Linux e macOS:
+
+```bash
+./gradlew build
+```
+
+### Avvio del gioco
+
+Su Windows:
+
+```powershell
+.\gradlew.bat run
+```
+
+Su Linux e macOS:
+
+```bash
+./gradlew run
+```
+
+### Verifiche funzionali
+
+Le principali funzionalità da controllare sono:
+
+- Movimento di Alex tramite WASD e frecce.
+- Spostamento tra gli ambienti della stazione.
+- Raccolta degli indizi disponibili.
+- Visualizzazione degli indizi nel taccuino.
+- Disponibilità delle scelte di dialogo in base al carisma.
+- Assegnazione degli indizi esclusivi dopo il dialogo corretto.
+- Aggiornamento delle missioni.
+- Pubblicazione dei rapporti.
+- Aggiornamento di reputazione, sospetto e giorni.
+- Salvataggio e caricamento dei progressi.
+
+Questa sezione descrive le verifiche eseguibili sul progetto; non presuppone la presenza di una suite di test JUnit.
+
+---
+
+## 11. Dichiarazione Uso AI
 
 Durante lo sviluppo di SpaceMystery è stato utilizzato **ChatGPT (OpenAI)** come assistente AI.
 
 ### Attività supportate dall'AI
 
-- **Progettazione architetturale** — supporto nell'organizzazione del progetto secondo il pattern MVC.
-- **Spiegazione dei concetti** — chiarimenti sui principi SOLID, sulle interfacce, sulle Stream API e sulle espressioni lambda.
-- **Supporto al codice** — suggerimenti per la scrittura, la comprensione e l'adattamento di porzioni di codice Java.
+- **Progettazione architetturale** — supporto nell'organizzazione del progetto secondo MVC.
+- **Spiegazione dei concetti** — chiarimenti su SOLID, interfacce, Stream API e lambda.
+- **Supporto al codice** — suggerimenti per la scrittura, comprensione e adattamento di codice Java.
 - **Debug** — assistenza nell'individuazione e nella risoluzione degli errori.
-- **Configurazione** — supporto nell'utilizzo di Gradle, JavaFX e delle dipendenze.
-- **Documentazione** — assistenza nella scrittura dei JavaDoc, del README e della Wiki.
-- **Revisione del codice** — supporto nel miglioramento della leggibilità, dei commenti e dello stile del codice Java.
+- **Configurazione** — supporto per Gradle, JavaFX e dipendenze.
+- **Documentazione** — assistenza nella scrittura di JavaDoc, README e Wiki.
+- **Revisione** — miglioramento della leggibilità e dell'organizzazione del codice.
+- **Analisi comparativa** — confronto delle modifiche con il progetto di riferimento e adattamento delle funzionalità pertinenti a SpaceMystery.
 
 ### Personalizzazione del progetto
 
-Il progetto originale è stato adattato all'ambientazione fantascientifica di SpaceMystery, con una stazione spaziale, un astronauta protagonista e rapporti investigativi.
+Il progetto di riferimento è stato adattato all'ambientazione fantascientifica di SpaceMystery.
 
-Il codice è stato modificato e verificato durante lo sviluppo per adattarlo alle caratteristiche del gioco.
+La storia è ambientata in una stazione spaziale e il protagonista è Alex, un astronauta impegnato in un'indagine.
+
+Sono stati adattati i personaggi, gli ambienti, gli indizi, i dialoghi e i rapporti investigativi.
 
 ### Comprensione del codice
 
-Gli aspetti principali del progetto da conoscere e saper spiegare sono:
+Gli aspetti principali da conoscere e saper spiegare sono:
 
-- La struttura MVC e le responsabilità dei diversi componenti.
-- L'applicazione dei principi SOLID.
-- L'utilizzo delle interfacce e dell'ereditarietà.
-- Il sistema RPG, i dialoghi a scelta multipla e il completamento delle missioni.
-- Il funzionamento di sospetto, giorni rimanenti e obiettivo corrente.
-- Il funzionamento delle Stream API e delle espressioni lambda.
-- Il salvataggio e il caricamento dei dati JSON tramite Gson.
-- Il funzionamento della mappa interattiva realizzata con JavaFX.
+- Architettura MVC e responsabilità dei componenti.
+- Principi SOLID e interfacce.
+- Ereditarietà e polimorfismo.
+- Command Pattern per il movimento.
+- Sistema RPG e requisiti di carisma.
+- Gestione degli indizi esplorabili ed esclusivi.
+- Missioni e obiettivi.
+- Reputazione, sospetto e giorni disponibili.
+- Stream API ed espressioni lambda.
+- Persistenza JSON con Gson.
+- Funzionamento della mappa JavaFX.
+- Utilizzo degli strumenti di AI durante lo sviluppo.
