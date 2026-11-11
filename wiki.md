@@ -1,3 +1,4 @@
+
 # SpaceMystery
 ## Wiki del Progetto
 
@@ -68,7 +69,6 @@ Collega il Model e la View.
 
 Gestisce le azioni del giocatore, come l'esplorazione, la raccolta degli indizi e la pubblicazione dei rapporti investigativi, coordinando anche il salvataggio dei dati.
 
-
 ---
 
 ## 4. Classi e Responsabilità
@@ -120,12 +120,14 @@ Rappresenta un indizio che il giocatore può raccogliere.
 Rappresenta un rapporto investigativo creato da Alex.
 
 - Contiene gli indizi utilizzati nel rapporto.
-- Contribuisce al calcolo della reputazione.
+- Contribuisce al calcolo della reputazione: ogni indizio utilizzato vale 10 punti.
 - Implementa `Identifiable` e `Publishable`.
 
 #### `PlayerStats`
 
 Gestisce le statistiche RPG di Alex: intelligenza, carisma, furtività, livello ed esperienza.
+
+Il passaggio di livello avviene automaticamente ogni 100 punti esperienza.
 
 #### `Quest`
 
@@ -155,7 +157,8 @@ Controller principale del gioco.
 - Coordina il salvataggio e il caricamento dello stato di gioco.
 - Gestisce il livello di sospetto e i giorni rimanenti.
 - Aggiorna gli obiettivi delle missioni dopo esplorazione, raccolta di indizi e dialoghi.
-- Fornisce l'obiettivo corrente tramite `getCurrentObjective()`.
+- Fornisce l'obiettivo corrente tramite `getCurrentObjective()`, guidando il giocatore passo dopo passo in base agli obiettivi ancora da completare.
+- Utilizza `ReputationCalculator` come espressione lambda per il calcolo della reputazione attraverso i rapporti investigativi.
 
 ### Package `repository`
 
@@ -175,6 +178,7 @@ Classe responsabile del caricamento dei dati iniziali del gioco.
 - Carica gli indizi disponibili.
 - Carica i personaggi non giocanti (NPC).
 - Carica le missioni definite in `quests.json`.
+- Utilizza le classi interne `NpcData`, `ChoiceData` e `QuestData` per la deserializzazione dei dati JSON.
 
 ### Package `view`
 
@@ -194,7 +198,7 @@ Interfaccia grafica principale del gioco.
 Vista della mappa interattiva della stazione spaziale.
 
 - Visualizza gli ambienti esplorabili.
-- Gestisce il movimento del personaggio tramite WASD o frecce direzionali.
+- Gestisce il movimento del personaggio tramite WASD o frecce direzionali, utilizzando `AnimationTimer` per l'animazione.
 - Permette di spostarsi tra gli ambienti della stazione.
 
 #### `WelcomeView`
@@ -204,6 +208,7 @@ Schermata introduttiva del gioco.
 - Presenta SpaceMystery e la sua ambientazione.
 - Mostra un tutorial sulle principali meccaniche.
 - Utilizza un effetto di scrittura animata per il testo.
+- Presenta uno sfondo spaziale in stile pixel art, disegnato tramite Canvas JavaFX.
 
 ### Classe `GameStats`
 
@@ -212,6 +217,7 @@ Classe dedicata alle statistiche di gioco.
 - Utilizza le Stream API di Java.
 - Calcola statistiche relative agli indizi raccolti.
 - Fornisce informazioni sulla reputazione e sui progressi del giocatore.
+- Utilizza le Stream API anche per raggruppare gli indizi in base al loro stato, quando previsto dai dati disponibili.
 
 ---
 
@@ -279,6 +285,12 @@ Nuovi indizi possono essere definiti nel file `clues.json`, ampliando le possibi
 
 La classe `PlayerStats` centralizza le statistiche e la progressione di Alex.
 
+### Modificare il sistema dei giorni
+
+Il numero massimo di giorni disponibili è definito dalla costante `MAX_DAYS` nella classe `GameController`.
+
+Modificando questa costante è possibile aumentare o diminuire il tempo disponibile per completare la missione, senza cambiare il resto della logica di gioco.
+
 ### Aggiungere un nuovo sistema di persistenza
 
 È possibile creare una nuova classe che implementa l'interfaccia `GameRepository`, ad esempio `DatabaseGameRepository`, per utilizzare un sistema di salvataggio diverso da JSON.
@@ -325,6 +337,7 @@ Il progetto utilizza interfacce piccole e specifiche.
 
 - `Clue` implementa soltanto le interfacce necessarie al suo comportamento.
 - Le interfacce `Identifiable`, `Describable`, `Discoverable` e `Publishable` definiscono responsabilità distinte.
+- Ogni classe implementa soltanto le interfacce necessarie alle proprie responsabilità, evitando metodi inutili.
 
 ### D — Dependency Inversion Principle
 
@@ -349,6 +362,7 @@ Durante lo sviluppo di SpaceMystery è stato utilizzato **ChatGPT (OpenAI)** com
 - **Debug** — assistenza nell'individuazione e nella risoluzione degli errori.
 - **Configurazione** — supporto nell'utilizzo di Gradle, JavaFX e delle dipendenze.
 - **Documentazione** — assistenza nella scrittura dei JavaDoc, del README e della Wiki.
+- **Revisione del codice** — supporto nel miglioramento della leggibilità, dei commenti e dello stile del codice Java.
 
 ### Personalizzazione del progetto
 
