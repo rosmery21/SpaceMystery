@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.rpg126604.view;
 import it.unicam.cs.mpgc.rpg126604.controller.GameController;
 import it.unicam.cs.mpgc.rpg126604.model.*;
 
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -300,6 +301,11 @@ public class GameView {
         Button reportButton = new Button("CREA RAPPORTO");
         reportButton.setMaxWidth(Double.MAX_VALUE);
         reportButton.setOnAction(event -> writeReport());
+
+        // il pulsante si disabilita automaticamente quando il taccuino è vuoto
+        reportButton.disableProperty().bind(
+                Bindings.isEmpty(cluesList.getItems())
+        );
 
         experienceBar = createBar(220, 12);
         reputationBar = createBar(220, 12);
