@@ -1,4 +1,3 @@
-
 # 🚀 SpaceMystery
 ## Wiki del Progetto
 
@@ -9,14 +8,15 @@
 1. [Descrizione del Progetto](#1-descrizione-del-progetto)
 2. [Funzionalità Implementate](#2-funzionalità-implementate)
 3. [Architettura MVC](#3-architettura-mvc)
-4. [Classi e Responsabilità](#4-classi-e-responsabilità)
-5. [Interfacce](#5-interfacce)
-6. [Persistenza dei Dati](#6-persistenza-dei-dati)
-7. [Estensibilità](#7-estensibilità)
-8. [Principi SOLID Applicati](#8-principi-solid-applicati)
-9. [Altri Design Pattern Utilizzati](#9-altri-design-pattern-utilizzati)
-10. [Verifica e Test](#10-verifica-e-test)
-11. [Dichiarazione Uso AI](#11-dichiarazione-uso-ai)
+4. [Responsabilità Individuate](#4-responsabilità-individuate)
+5. [Classi e Responsabilità](#5-classi-e-responsabilità)
+6. [Interfacce](#6-interfacce)
+7. [Persistenza dei Dati](#7-persistenza-dei-dati)
+8. [Estensibilità](#8-estensibilità)
+9. [Principi SOLID Applicati](#9-principi-solid-applicati)
+10. [Altri Design Pattern Utilizzati](#10-altri-design-pattern-utilizzati)
+11. [Verifica e Test](#11-verifica-e-test)
+12. [Dichiarazione Uso AI](#12-dichiarazione-uso-ai)
 
 ---
 
@@ -99,7 +99,26 @@ La separazione MVC facilita la manutenzione e l'estensione del progetto.
 
 ---
 
-## 4. Classi e Responsabilità
+## 4. Responsabilità Individuate
+
+Prima di assegnare le responsabilità alle singole classi, sono state individuate le responsabilità principali che il sistema nel suo complesso deve garantire.
+
+- **Gestione del personaggio giocante:** tracciare la progressione di Alex, le statistiche RPG, gli indizi raccolti, gli ambienti visitati e le missioni.
+- **Gestione del mondo di gioco:** rappresentare gli ambienti esplorabili della stazione spaziale e le informazioni necessarie alla loro visualizzazione.
+- **Gestione dei personaggi non giocanti:** gestire i membri dell'equipaggio, i dialoghi, le scelte con requisiti di carisma e gli indizi esclusivi.
+- **Gestione degli indizi:** distinguere gli indizi esplorabili da quelli ottenibili tramite dialogo e registrarne la scoperta.
+- **Gestione dei rapporti e della reputazione:** utilizzare gli indizi raccolti per creare rapporti investigativi e aggiornare la reputazione.
+- **Gestione delle missioni:** tenere traccia degli obiettivi e verificarne il completamento.
+- **Gestione dello stato di rischio:** controllare il sospetto e il tempo disponibile, determinando le condizioni di vittoria e sconfitta.
+- **Gestione della persistenza:** salvare e caricare lo stato della partita attraverso un'interfaccia indipendente dall'implementazione concreta.
+- **Gestione dei dati di configurazione:** caricare ambienti, indizi, NPC e missioni dai file JSON, separandoli dal codice Java.
+- **Gestione dell'interfaccia utente:** visualizzare la mappa, le statistiche, il taccuino, i dialoghi e il registro della missione, raccogliendo le azioni del giocatore.
+
+Queste responsabilità di alto livello sono state distribuite tra le classi descritte nella sezione successiva, seguendo il principio di singola responsabilità (**SRP**).
+
+---
+
+## 5. Classi e Responsabilità
 
 ### Package `model`
 
@@ -299,7 +318,7 @@ Utilizza un effetto di scrittura animata e una rappresentazione grafica spaziale
 
 ---
 
-## 5. Interfacce
+## 6. Interfacce
 
 SpaceMystery utilizza interfacce per definire contratti e separare le responsabilità.
 
@@ -316,7 +335,7 @@ Le interfacce permettono di mantenere separati i contratti dalle implementazioni
 
 ---
 
-## 6. Persistenza dei Dati
+## 7. Persistenza dei Dati
 
 SpaceMystery utilizza **JSON** e la libreria **Gson**.
 
@@ -363,7 +382,7 @@ Il salvataggio conserva l'indizio raccolto insieme agli altri progressi del gioc
 
 ---
 
-## 7. Estensibilità
+## 8. Estensibilità
 
 Il progetto è organizzato per facilitare l'aggiunta di nuovi contenuti e per rendere possibile, in futuro, l'adattamento a dispositivi diversi.
 
@@ -461,7 +480,7 @@ L'interfaccia funzionale `ReputationCalculator` consente di rappresentare un alg
 
 ---
 
-## 8. Principi SOLID Applicati
+## 9. Principi SOLID Applicati
 
 ### S — Single Responsibility Principle
 
@@ -520,7 +539,7 @@ Questo permette di cambiare l'implementazione della persistenza senza modificare
 
 ---
 
-## 9. Altri Design Pattern Utilizzati
+## 10. Altri Design Pattern Utilizzati
 
 ### Command Pattern
 
@@ -556,7 +575,7 @@ Non viene utilizzato un `FontRegistry` Singleton: l'aspetto grafico delle scherm
 
 ---
 
-## 10. Verifica e Test
+## 11. Verifica e Test
 
 Durante lo sviluppo è possibile verificare il progetto utilizzando il Gradle Wrapper.
 
@@ -607,20 +626,19 @@ Questa sezione descrive le verifiche eseguibili sul progetto; non presuppone la 
 
 ---
 
-## 11. Dichiarazione Uso AI
+## 12. Dichiarazione Uso AI
 
 Durante lo sviluppo di SpaceMystery è stato utilizzato **ChatGPT (OpenAI)** come assistente AI.
 
 ### Attività supportate dall'AI
 
-- **Progettazione architetturale** — supporto nell'organizzazione del progetto secondo MVC.
-- **Spiegazione dei concetti** — chiarimenti su SOLID, interfacce, Stream API e lambda.
-- **Supporto al codice** — suggerimenti per la scrittura, comprensione e adattamento di codice Java.
-- **Debug** — assistenza nell'individuazione e nella risoluzione degli errori.
-- **Configurazione** — supporto per Gradle, JavaFX e dipendenze.
-- **Documentazione** — assistenza nella scrittura di JavaDoc, README e Wiki.
-- **Revisione** — miglioramento della leggibilità e dell'organizzazione del codice.
-- **Analisi comparativa** — confronto delle modifiche con il progetto di riferimento e adattamento delle funzionalità pertinenti a SpaceMystery.
+**Assimilazione di concetti teorici:** ChatGPT è stato utilizzato per chiarire argomenti trattati a lezione, come i principi SOLID, il pattern MVC, le Stream API e le interfacce funzionali, prima di applicarli al codice.
+
+**Automatizzazione del codice ripetitivo:** supporto nella scrittura di porzioni di codice simili tra loro, come getter, setter, costruttori e registrazione dei comandi di movimento in `MapView`.
+
+**Suggerimenti sulla struttura del codice:** indicazioni sull'organizzazione dei package e delle classi, in particolare sulla separazione tra `model`, `view`, `controller` e `repository`, adattate alle esigenze di SpaceMystery.
+
+**Altre attività di supporto:** assistenza nella configurazione di Gradle e JavaFX, individuazione di errori di compilazione, revisione della leggibilità del codice, documentazione JavaDoc/README/Wiki e confronto con il progetto di riferimento per valutare le modifiche pertinenti.
 
 ### Personalizzazione del progetto
 
