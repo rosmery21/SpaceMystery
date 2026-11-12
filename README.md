@@ -132,16 +132,13 @@ Per maggiori dettagli sull'architettura, sulle classi, sulle interfacce e sui pr
 
 ## 🤖 Uso di strumenti di AI
 
-Durante lo sviluppo è stato utilizzato **ChatGPT (OpenAI)** come assistente AI per:
+Durante lo sviluppo di **SpaceMystery** è stato utilizzato **ChatGPT (OpenAI)** come assistente IA per:
 
-- Supporto nella progettazione dell'architettura MVC.
-- Suggerimenti sulla struttura delle classi e delle interfacce.
-- Spiegazione e applicazione dei principi SOLID e Clean Code.
-- Supporto nella configurazione di Gradle e JavaFX.
-- Supporto nella scrittura, comprensione e adattamento di porzioni di codice.
-- Assistenza nella documentazione JavaDoc e nella Wiki.
-- Revisione e miglioramento dello stile del codice per renderlo più leggibile e naturale.
+- Supporto nella progettazione dell'architettura MVC
+- Spiegazione e applicazione dei principi SOLID
+- Supporto nella configurazione di Gradle e JavaFX
+- Assimilazione di concetti teorici
+- Automatizzazione di codice ripetitivo
+- Suggerimenti sulla struttura del codice
 
-Il codice è stato adattato al progetto SpaceMystery e verificato durante lo sviluppo.
-
-Per una descrizione più dettagliata dell'architettura, delle funzionalità e dell'utilizzo degli strumenti di AI, consulta il file **[wiki.md](wiki.md)**.
+Per una descrizione dettagliata consultare la **[Wiki del repository](wiki.md)**.
