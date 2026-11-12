@@ -93,6 +93,8 @@ Il Controller coordina il Model e la View.
 
 Gestisce esplorazione, raccolta degli indizi, dialoghi, missioni, rapporti, sospetto, giorni disponibili e persistenza.
 
+La logica di gioco è separata dai componenti grafici JavaFX: una diversa interfaccia può richiamare le operazioni pubbliche del controller senza riprodurre le regole del gioco.
+
 La separazione MVC facilita la manutenzione e l'estensione del progetto.
 
 ---
@@ -223,6 +225,8 @@ private final Map<String, Clue> clues;
 ```
 
 Questa struttura permette di cercare un indizio tramite identificativo anche quando non appartiene a una stanza.
+
+Gli NPC vengono inoltre indicizzati per ambiente durante il caricamento iniziale tramite una struttura `Map<String, List<NPC>>`. Il metodo `getNpcsInCurrentLocation()` restituisce i personaggi presenti nella stanza corrente, evitando di cercarli ogni volta tra tutti gli NPC o di rileggere `npcs.json`.
 
 Il metodo:
 
@@ -361,7 +365,45 @@ Il salvataggio conserva l'indizio raccolto insieme agli altri progressi del gioc
 
 ## 7. Estensibilità
 
-Il progetto è organizzato per facilitare l'aggiunta di nuovi contenuti.
+Il progetto è organizzato per facilitare l'aggiunta di nuovi contenuti e per rendere possibile, in futuro, l'adattamento a dispositivi diversi.
+
+### Estendere SpaceMystery su più dispositivi
+
+L'architettura **Model-View-Controller (MVC)** separa la logica del gioco dall'interfaccia grafica. Nell'implementazione attuale, le schermate sono realizzate con **JavaFX**; il Model e il Controller gestiscono invece dati, regole e azioni di gioco senza dipendere direttamente dai controlli grafici JavaFX.
+
+Questa organizzazione rende possibile progettare altre interfacce mantenendo il comportamento di base del gioco. Non significa, però, che SpaceMystery sia già disponibile su Android o sul web: queste sarebbero **estensioni future**.
+
+#### Componenti riutilizzabili
+
+In una futura versione per un'altra piattaforma potrebbero essere riutilizzati:
+
+- **Model:** le classi di dominio, tra cui `Astronaut`, `NPC`, `Location`, `Clue`, `Report`, `Quest`, `PlayerStats` e `GameState`.
+- **Controller:** `GameController`, che coordina spostamenti, raccolta degli indizi, dialoghi, missioni e rapporti investigativi.
+- **Dati di configurazione:** `locations.json`, `clues.json`, `npcs.json` e `quests.json`.
+- **Astrazione della persistenza:** `GameRepository`, che permette di sostituire il meccanismo concreto di salvataggio. L'implementazione JSON potrebbe richiedere adattamenti per l'accesso ai file sulla nuova piattaforma.
+
+Le classi di `view`, come `GameView`, `MapView` e `WelcomeView`, sono invece legate alla presentazione JavaFX e dovrebbero essere sostituite o riprogettate.
+
+#### Versione mobile
+
+Una possibile versione Android richiederebbe nuove schermate costruite con i componenti grafici della piattaforma e adatte all'interazione touchscreen. La nuova interfaccia potrebbe utilizzare le operazioni del `GameController` per gestire l'esplorazione, i dialoghi e gli indizi, anziché duplicare le regole del gioco.
+
+Per esempio, `getNpcsInCurrentLocation()` permetterebbe di mostrare i membri dell'equipaggio presenti nell'ambiente corrente. Sarebbero comunque necessari adattamenti per la navigazione, l'avvio dell'applicazione e la gestione dei salvataggi sul dispositivo.
+
+#### Versione web
+
+Una versione web potrebbe utilizzare un'interfaccia HTML, CSS e JavaScript, con un backend Java che esegue la logica di gioco. In questa soluzione, il browser invierebbe le azioni del giocatore al server, che le elaborerebbe attraverso il controller e restituirebbe lo stato aggiornato.
+
+Sarebbe necessario introdurre un livello di comunicazione tra client e server, oltre a gestire le sessioni dei giocatori e la persistenza dei rispettivi salvataggi. Il controller non potrebbe essere richiamato direttamente dal browser senza questa infrastruttura.
+
+#### Vantaggi della separazione MVC
+
+- **Riutilizzabilità:** le regole del gioco non devono essere riscritte per ogni interfaccia.
+- **Manutenibilità:** gli interventi sulla grafica restano distinti da quelli sulla logica.
+- **Estendibilità:** nuove piattaforme possono utilizzare gli stessi concetti e servizi del dominio.
+- **Testabilità:** la logica può essere verificata senza avviare necessariamente le schermate JavaFX.
+
+Il punto di contatto tra una futura interfaccia e il gioco rimarrebbero le operazioni pubbliche offerte dal `GameController`, eventualmente esposte tramite un livello di adattamento specifico per la piattaforma.
 
 ### Aggiungere nuovi ambienti
 
@@ -412,10 +454,6 @@ La costante può essere modificata per cambiare il limite temporale della missio
 Una nuova classe può implementare `GameRepository`, ad esempio `DatabaseGameRepository`.
 
 Il controller utilizza l'interfaccia, senza dipendere direttamente da `JsonGameRepository`.
-
-### Aggiungere una nuova interfaccia grafica
-
-La separazione MVC consente di sviluppare una nuova View riutilizzando la logica del controller.
 
 ### Modificare il calcolo della reputazione
 
@@ -608,3 +646,4 @@ Gli aspetti principali da conoscere e saper spiegare sono:
 - Persistenza JSON con Gson.
 - Funzionamento della mappa JavaFX.
 - Utilizzo degli strumenti di AI durante lo sviluppo.
+- Separazione tra logica di gioco e interfaccia grafica per una futura estensione mobile o web.
