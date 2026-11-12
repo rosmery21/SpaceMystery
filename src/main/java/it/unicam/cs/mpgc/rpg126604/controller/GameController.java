@@ -7,7 +7,7 @@ import it.unicam.cs.mpgc.rpg126604.repository.GameDataLoader;
 
 import java.util.*;
 
-// coordina esplorazione, indizi, dialoghi e missioni della stazione
+// Coordina esplorazione, indizi, dialoghi e missioni della stazione.
 public class GameController {
 
     private final GameRepository repository;
@@ -21,6 +21,10 @@ public class GameController {
     private final Map<String, Clue> clues;
 
     private final Map<String, NPC> npcs;
+
+    // Indice degli NPC per stanza, costruito una sola volta al caricamento.
+    private final Map<String, List<NPC>> npcsByLocation;
+
     private final Map<String, Quest> quests;
 
     private Location currentLocation;
@@ -44,6 +48,7 @@ public class GameController {
         this.locations = new LinkedHashMap<>();
         this.clues = new LinkedHashMap<>();
         this.npcs = new LinkedHashMap<>();
+        this.npcsByLocation = new LinkedHashMap<>();
         this.quests = new LinkedHashMap<>();
 
         this.suspicionLevel = 0;
@@ -74,9 +79,21 @@ public class GameController {
             }
         }
 
-        // Carica i membri dell'equipaggio.
+        // Carica i membri dell'equipaggio e li indicizza per stanza.
+        // Il JSON viene letto una sola volta.
         for (NPC npc : dataLoader.loadNPCs()) {
             npcs.put(npc.getId(), npc);
+
+            String locationId = npc.getLocationId();
+
+            if (locationId != null && locations.containsKey(locationId)) {
+                npcsByLocation
+                        .computeIfAbsent(
+                                locationId,
+                                id -> new ArrayList<>()
+                        )
+                        .add(npc);
+            }
         }
 
         // Carica le missioni di Alex.
@@ -119,6 +136,17 @@ public class GameController {
 
     public Collection<NPC> getAllNPCs() {
         return Collections.unmodifiableCollection(npcs.values());
+    }
+
+    // Restituisce gli NPC presenti nella stanza corrente.
+    // Utilizza l'indice già costruito, senza rileggere npcs.json.
+    public List<NPC> getNpcsInCurrentLocation() {
+        return Collections.unmodifiableList(
+                npcsByLocation.getOrDefault(
+                        currentLocation.getId(),
+                        Collections.emptyList()
+                )
+        );
     }
 
     public Collection<Quest> getAllQuests() {

@@ -1,3 +1,4 @@
+
 package it.unicam.cs.mpgc.rpg126604.view;
 
 import it.unicam.cs.mpgc.rpg126604.controller.GameController;
@@ -16,13 +17,13 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 
-// costruisce e aggiorna l'interfaccia principale del gioco
+// Costruisce e aggiorna l'interfaccia principale del gioco.
 public class GameView {
 
     private final GameController controller;
     private final Stage stage;
 
-    // percorso del tema grafico usato anche nelle finestre di dialogo
+    // Percorso del tema grafico usato anche nelle finestre di dialogo.
     private final String styleSheetPath;
 
     private Label locationLabel;
@@ -48,7 +49,7 @@ public class GameView {
         this.controller = controller;
         this.stage = stage;
 
-        // carica una sola volta il CSS spaziale di SpaceMystery
+        // Carica una sola volta il CSS spaziale di SpaceMystery.
         URL cssUrl = getClass().getResource("/css/style.css");
         this.styleSheetPath = cssUrl != null ? cssUrl.toExternalForm() : null;
     }
@@ -63,7 +64,7 @@ public class GameView {
 
         Scene scene = new Scene(root, 1100, 750);
 
-        // applica il tema alla finestra principale
+        // Applica il tema alla finestra principale.
         if (styleSheetPath != null) {
             scene.getStylesheets().add(styleSheetPath);
         }
@@ -302,7 +303,7 @@ public class GameView {
         reportButton.setMaxWidth(Double.MAX_VALUE);
         reportButton.setOnAction(event -> writeReport());
 
-        // il pulsante si disabilita automaticamente quando il taccuino è vuoto
+        // Il pulsante si disabilita quando il taccuino è vuoto.
         reportButton.disableProperty().bind(
                 Bindings.isEmpty(cluesList.getItems())
         );
@@ -357,7 +358,7 @@ public class GameView {
         Label title = new Label("REGISTRO MISSIONE");
         title.getStyleClass().add("section-title");
 
-        // evita lo sfondo bianco interno di uno ScrollPane
+        // Evita lo sfondo bianco interno di uno ScrollPane.
         messageLog = new VBox(5);
         messageLog.setPadding(new Insets(10));
         messageLog.setMinHeight(100);
@@ -509,14 +510,18 @@ public class GameView {
     }
 
     /**
-     * Permette di scegliere un membro dell'equipaggio con cui parlare.
+     * Permette di parlare con gli NPC presenti nella stanza corrente.
      */
     private void showNPCDialog() {
+
+        // Usa l'indice per stanza già costruito dal controller.
         java.util.List<NPC> crew =
-                new java.util.ArrayList<>(controller.getAllNPCs());
+                controller.getNpcsInCurrentLocation();
 
         if (crew.isEmpty()) {
-            addMessage("Nessun membro dell'equipaggio disponibile.");
+            addMessage(
+                    "Nessun membro dell'equipaggio presente in questa stanza."
+            );
             return;
         }
 
@@ -526,10 +531,13 @@ public class GameView {
         );
 
         dialog.setTitle("Equipaggio della stazione");
-        dialog.setHeaderText("Con chi vuoi parlare?");
+        dialog.setHeaderText(
+                "Con chi vuoi parlare in " +
+                        controller.getCurrentLocation().getName() + "?"
+        );
         dialog.setContentText("Membro dell'equipaggio:");
 
-        // applica il CSS anche alla scelta dell'equipaggio
+        // Applica il CSS anche alla scelta dell'equipaggio.
         applyStylesheet(dialog.getDialogPane());
 
         dialog.showAndWait().ifPresent(selectedName -> {
@@ -609,7 +617,6 @@ public class GameView {
                                     : response)
                     );
 
-
                     updateView();
                     checkGameState();
 
@@ -642,7 +649,7 @@ public class GameView {
 
         dialog.getDialogPane().setContent(scroll);
 
-        // applica il tema spaziale anche ai dialoghi dell'equipaggio
+        // Applica il tema spaziale anche ai dialoghi dell'equipaggio.
         applyStylesheet(dialog.getDialogPane());
 
         dialog.showAndWait();
@@ -669,7 +676,7 @@ public class GameView {
         dialog.setHeaderText("Crea un rapporto investigativo");
         dialog.setContentText("Titolo:");
 
-        // applica il CSS alla finestra di creazione del rapporto
+        // Applica il CSS alla finestra di creazione del rapporto.
         applyStylesheet(dialog.getDialogPane());
 
         dialog.showAndWait().ifPresent(title -> {
@@ -845,7 +852,7 @@ public class GameView {
         }
     }
 
-    // applica il tema spaziale ai dialoghi JavaFX
+    // Applica il tema spaziale ai dialoghi JavaFX.
     private void applyStylesheet(DialogPane pane) {
         if (styleSheetPath != null) {
             pane.getStylesheets().add(styleSheetPath);
@@ -859,7 +866,7 @@ public class GameView {
 
         alert.setContentText(message);
 
-        // applica il CSS anche ai messaggi informativi
+        // Applica il CSS anche ai messaggi informativi.
         applyStylesheet(alert.getDialogPane());
 
         alert.showAndWait();

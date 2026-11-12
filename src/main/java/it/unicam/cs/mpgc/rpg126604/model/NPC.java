@@ -1,3 +1,4 @@
+
 package it.unicam.cs.mpgc.rpg126604.model;
 
 import it.unicam.cs.mpgc.rpg126604.interfaces.Identifiable;
@@ -6,15 +7,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// un membro dell'equipaggio con cui Alex può parlare
+// Un membro dell'equipaggio con cui Alex può parlare.
 public class NPC extends GameCharacter implements Identifiable {
 
     private String id;
+
+    // Stanza della stazione in cui si trova l'NPC.
+    private String locationId;
+
     private final List<String> dialogues;
     private final List<Clue> cluesProvided;
     private final List<DialogueChoice> dialogueChoices;
 
-    // Costruttore vuoto per la deserializzazione JSON
+    // Costruttore vuoto per la deserializzazione JSON.
     public NPC() {
         super();
         this.dialogues = new ArrayList<>();
@@ -46,6 +51,11 @@ public class NPC extends GameCharacter implements Identifiable {
         return id;
     }
 
+    // Restituisce la stanza associata all'NPC.
+    public String getLocationId() {
+        return locationId;
+    }
+
     public void addDialogue(String dialogue) {
         if (dialogue == null || dialogue.isBlank()) {
             throw new IllegalArgumentException("Dialogo non valido");
@@ -71,7 +81,9 @@ public class NPC extends GameCharacter implements Identifiable {
      */
     public void addDialogueChoice(DialogueChoice choice) {
         if (choice == null) {
-            throw new IllegalArgumentException("Scelta di dialogo non valida");
+            throw new IllegalArgumentException(
+                    "Scelta di dialogo non valida"
+            );
         }
 
         dialogueChoices.add(choice);
@@ -96,8 +108,13 @@ public class NPC extends GameCharacter implements Identifiable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof NPC)) return false;
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof NPC)) {
+            return false;
+        }
 
         NPC other = (NPC) obj;
         return id != null && id.equals(other.id);

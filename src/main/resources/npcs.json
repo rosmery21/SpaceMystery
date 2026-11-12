@@ -2,6 +2,7 @@
 [
   {
     "id": "npc_vega",
+    "locationId": "laboratorio",
     "name": "Dott.ssa Vega",
     "role": "Responsabile scientifica",
     "dialogues": [
@@ -36,6 +37,7 @@
   },
   {
     "id": "npc_orion",
+    "locationId": "sala_comandi",
     "name": "Comandante Orion",
     "role": "Comandante della stazione",
     "dialogues": [
@@ -70,6 +72,7 @@
   },
   {
     "id": "npc_nova",
+    "locationId": "sala_motori",
     "name": "Ingegnere Nova",
     "role": "Responsabile dei motori",
     "dialogues": [
