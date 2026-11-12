@@ -622,7 +622,33 @@ Le principali funzionalità da controllare sono:
 - Aggiornamento di reputazione, sospetto e giorni.
 - Salvataggio e caricamento dei progressi.
 
-Questa sezione descrive le verifiche eseguibili sul progetto; non presuppone la presenza di una suite di test JUnit.
+### Test automatici JUnit 5
+
+SpaceMystery include una suite di **cinque test automatici JUnit 5** per verificare il comportamento di `GameController` senza avviare l’interfaccia grafica JavaFX.
+
+I test sono definiti in `src/test/java/it/unicam/cs/mpgc/rpg126604/controller/GameControllerTest.java` e utilizzano `InMemoryGameRepository`, un’implementazione di `GameRepository` collocata nel package di test `repository`. Questa implementazione conserva lo stato della partita in memoria, senza creare file JSON.
+
+I test verificano:
+
+- L’assenza di salvataggi all’inizio di una nuova partita.
+- La creazione di un salvataggio tramite `saveGame()`.
+- L’aumento del sospetto di 5 punti, la diminuzione di un giorno e l’aggiornamento della posizione quando Alex si sposta nel laboratorio.
+- La raccolta di un indizio esplorabile e il suo inserimento nel taccuino investigativo.
+- Il lancio di `IllegalArgumentException` quando viene richiesto uno spostamento verso una stanza inesistente.
+
+Per eseguire i test su Windows:
+
+```powershell
+.\gradlew.bat clean test
+```
+
+Su Linux e macOS:
+
+```bash
+./gradlew clean test
+```
+
+L’esecuzione dei test con Gradle è stata completata correttamente (`BUILD SUCCESSFUL`). L’uso di un repository in memoria consente di testare il controller indipendentemente dalla persistenza JSON, sfruttando l’iniezione delle dipendenze attraverso l’interfaccia `GameRepository`.
 
 ---
 
