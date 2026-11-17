@@ -140,5 +140,4 @@ Durante lo sviluppo di **SpaceMystery** è stato utilizzato **ChatGPT (OpenAI)**
 - Assimilazione di concetti teorici
 - Automatizzazione di codice ripetitivo
 - Suggerimenti sulla struttura del codice
-
-Per una descrizione dettagliata consultare la **[Wiki del repository](wiki.md)**.
+Per una descrizione dettagliata consultare la **[Wiki ufficiale del repository](https://github.com/rosmery21/SpaceMystery/wiki)**.
