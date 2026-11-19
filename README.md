@@ -70,8 +70,8 @@ Su Linux e macOS:
 - **SOSPETTO** — Tieni sotto controllo il livello di sospetto, che aumenta con alcune azioni.
 - **TEMPO LIMITATO** — Hai **10 giorni** per completare la missione.
 - **REGISTRO MISSIONE** — Leggi gli aggiornamenti sulle azioni svolte e gli avvisi importanti.
-- **CONTINUA PARTITA** — Se è presente un salvataggio, puoi riprendere la missione senza perdere i progressi.
-- **Obiettivo finale** — Raggiungi **100 punti di reputazione** entro il limite di tempo, evitando che il sospetto raggiunga il livello massimo.
+- **CONTINUA MISSIONE** — Se è presente un salvataggio, puoi riprendere la missione senza perdere i progressi.
+- **OBIETTIVO FINALE** — Raggiungi **100 punti di reputazione** entro il limite di tempo, evitando che il sospetto raggiunga il livello massimo.
 
 ---
 
