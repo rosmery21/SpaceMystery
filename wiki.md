@@ -28,7 +28,7 @@ Il protagonista è **Alex**, un astronauta che deve esplorare gli ambienti della
 
 La missione consiste nel raggiungere **100 punti di reputazione entro 10 giorni**, evitando che il livello di sospetto raggiunga 100.
 
-Il progetto è sviluppato in **Java 24**, con interfaccia grafica **JavaFX 24.0.1**, applicando i principi studiati durante il corso di Metodologie di Programmazione.
+Il progetto è sviluppato in **Java 24**, con interfaccia grafica **JavaFX 24.0.1**, applicando i principi studiati durante il corso di Modellazione e Gestione della Conoscenza.
 
 ---
 
@@ -571,7 +571,7 @@ Questa scelta riduce l'accoppiamento tra logica di gioco e salvataggio dei dati.
 
 Il progetto utilizza le espressioni lambda, ad esempio nella gestione degli eventi JavaFX e nell'interfaccia funzionale `ReputationCalculator`.
 
-Non viene utilizzato un `FontRegistry` Singleton: l'aspetto grafico delle schermate è gestito attraverso il CSS e gli stili JavaFX.
+L'aspetto grafico delle schermate è gestito attraverso il CSS e gli stili JavaFX.
 
 ---
 
@@ -664,19 +664,17 @@ Durante lo sviluppo di SpaceMystery è stato utilizzato **ChatGPT (OpenAI)** com
 
 **Suggerimenti sulla struttura del codice:** indicazioni sull'organizzazione dei package e delle classi, in particolare sulla separazione tra `model`, `view`, `controller` e `repository`, adattate alle esigenze di SpaceMystery.
 
-**Altre attività di supporto:** assistenza nella configurazione di Gradle e JavaFX, individuazione di errori di compilazione, revisione della leggibilità del codice, documentazione JavaDoc/README/Wiki e confronto con il progetto di riferimento per valutare le modifiche pertinenti.
+**Altre attività di supporto:** assistenza nella configurazione di Gradle e JavaFX, individuazione di errori di compilazione, revisione della leggibilità del codice e supporto alla stesura e revisione della documentazione JavaDoc, README e Wiki.
 
-### Personalizzazione del progetto
+### Ambientazione e caratteristiche di SpaceMystery
 
-Il progetto di riferimento è stato adattato all'ambientazione fantascientifica di SpaceMystery.
+SpaceMystery è ambientato in una stazione spaziale. Il protagonista è Alex, un astronauta impegnato in un'indagine.
 
-La storia è ambientata in una stazione spaziale e il protagonista è Alex, un astronauta impegnato in un'indagine.
+Il gioco comprende personaggi dell'equipaggio, ambienti esplorabili, indizi, dialoghi a scelta multipla e rapporti investigativi.
 
-Sono stati adattati i personaggi, gli ambienti, gli indizi, i dialoghi e i rapporti investigativi.
+### Aspetti tecnici documentati
 
-### Comprensione del codice
-
-Gli aspetti principali da conoscere e saper spiegare sono:
+I principali aspetti tecnici descritti in questa Wiki sono:
 
 - Architettura MVC e responsabilità dei componenti.
 - Principi SOLID e interfacce.
